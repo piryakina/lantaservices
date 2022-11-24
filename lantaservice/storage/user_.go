@@ -66,9 +66,19 @@ func AddUser(ctx context.Context, usr *usecase.User) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	query := "INSERT INTO \"user\" (fio, login, email, phone, password, \"role\") VALUES ($1,$2,$3,$4,$5,$6) returning id"
+	var idRole int64
+	query := "SELECT id from \"role\" WHERE role=$1"
+	if usr.Role != "" {
+		row := db.QueryRowContext(ctx, query, usr.Role)
+		if err = row.Scan(&idRole); err != nil {
+			return 0, err
+		}
+	} else {
+		idRole = 1
+	}
+	query = "INSERT INTO \"user\" (fio, login, email, phone, password, \"role\") VALUES ($1,$2,$3,$4,$5,$6) returning id"
 	var id int64
-	row := db.QueryRowContext(ctx, query, usr.FIO, usr.Login, usr.Email, usr.Phone, usr.Password, usr.Role)
+	row := db.QueryRowContext(ctx, query, usr.FIO, usr.Login, usr.Email, usr.Phone, usr.Password, idRole)
 	if err = row.Scan(&id); err != nil {
 		return 0, err
 	}
