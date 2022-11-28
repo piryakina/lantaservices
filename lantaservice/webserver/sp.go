@@ -6,15 +6,15 @@ import (
 	"net/http"
 )
 
-func (s *HttpServer) AddUser(w http.ResponseWriter, r *http.Request) {
+func (s *HttpServer) AddSp(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	c := &entities.User{}
+	c := &entities.SP{}
 	err := json.NewDecoder(r.Body).Decode(c)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
 	}
-	id, err := s.CatalogService.SignUpUser(ctx, c)
+	id, err := s.CatalogService.SignUpSP(ctx, c)
 	if err != nil {
 		ErrorResponse(w, err)
 		return

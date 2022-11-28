@@ -1,10 +1,19 @@
 package usecase
 
-type SP struct {
-	ID          int64  `json:"id"`
-	NameCompany string `json:"name_company,omitempty"`
-	Login       string `json:"login,omitempty"`
-	Password    string `json:"password,omitempty"`
-	Email       string `json:"email,omitempty"`
-	Phone       string `json:"phone,omitempty"`
+import (
+	"context"
+	"golang.org/x/crypto/bcrypt"
+	"lantaservice/entities"
+)
+
+func (s *ServiceUser) SignUpSP(ctx context.Context, usr *entities.SP) (int64, error) { //registration
+	hash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return 0, err
+	}
+	id, err := s.UserRepository.SignUpStorage(ctx, usr.Login, string(hash))
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }

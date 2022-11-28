@@ -1,12 +1,23 @@
 package main
 
 import (
-	"fmt"
+	"github.com/rs/cors"
+	"lantaservice/webserver"
+	"log"
 	"net/http"
 )
 
 func main() {
-
-	fmt.Println("Server is listening...")
-	http.ListenAndServe("localhost:8080", nil)
+	Router := webserver.NewRouter()
+	Router.Use(webserver.SessionMiddleware)
+	//Router.Use(webserver.MiddlewareCors)
+	http.Handle("/", Router)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+	err := http.ListenAndServe(":8080", c.Handler(Router))
+	if err != nil {
+		log.Fatal(err)
+	}
 }

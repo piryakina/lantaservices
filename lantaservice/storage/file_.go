@@ -10,6 +10,6 @@ type FileDB struct {
 	Owner    int64  `db:"owner"`
 }
 
-func GetFileByOwnerId(ctx context.Context, id int64) {
+func (s *Storage) GetFileByOwnerId(ctx context.Context, id int64) {
 
 }

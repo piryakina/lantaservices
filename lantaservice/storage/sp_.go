@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 	"database/sql"
-	"lantaservice/usecase"
+	"lantaservice/entities"
 )
 
 type SPDB struct {
@@ -15,7 +15,7 @@ type SPDB struct {
 	Password    sql.NullString `db:"password""`
 }
 
-func FromSPDB(p *SPDB) *usecase.SP {
+func FromSPDB(p *SPDB) *entities.SP {
 	var n string
 	if p.NameCompany.Valid {
 		n = p.NameCompany.String
@@ -37,7 +37,7 @@ func FromSPDB(p *SPDB) *usecase.SP {
 		phone = p.Phone.String
 	}
 
-	return &usecase.SP{
+	return &entities.SP{
 		ID:          p.ID,
 		Login:       login,
 		Password:    pwd,
@@ -48,8 +48,8 @@ func FromSPDB(p *SPDB) *usecase.SP {
 }
 
 // AddSP - add sp to db
-func AddSP(ctx context.Context, sp *usecase.SP) (int64, error) {
-	db, err := GetDB()
+func (s *Storage) AddSP(ctx context.Context, sp *entities.SP) (int64, error) {
+	db, err := s.GetDB()
 	if err != nil {
 		return 0, err
 	}
@@ -63,8 +63,8 @@ func AddSP(ctx context.Context, sp *usecase.SP) (int64, error) {
 }
 
 // GetSPById - get sp by id
-func GetSPById(ctx context.Context, id int64) (*usecase.SP, error) {
-	db, err := GetDB()
+func (s *Storage) GetSPById(ctx context.Context, id int64) (*entities.SP, error) {
+	db, err := s.GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,22 @@ func GetSPById(ctx context.Context, id int64) (*usecase.SP, error) {
 	if err = row.Scan(&sp.ID, &sp.NameCompany, &sp.Email, &sp.Phone, &sp.Login, &sp.Password); err != nil {
 		return nil, err
 	}
-	var partner *usecase.SP
+	var partner *entities.SP
 	partner = FromSPDB(&sp)
 	return partner, nil
+}
+func (s *Storage) LoginSpStorage(ctx context.Context, usr string) (int64, string, error) {
+	db, err := s.GetDB()
+	if err != nil {
+		return 0, "", err
+	}
+	query := "SELECT id,password from \"user\" WHERE login=$1"
+	var pwd string
+	var id int64
+	row := db.QueryRowContext(ctx, query, usr)
+
+	if err = row.Scan(&id, &pwd); err != nil {
+		return 0, "", err
+	}
+	return id, pwd, nil
 }

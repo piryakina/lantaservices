@@ -3,8 +3,7 @@ package storage
 import (
 	"context"
 	"database/sql"
-
-	"lantaservice/usecase"
+	"lantaservice/entities"
 )
 
 type UserDB struct {
@@ -17,7 +16,7 @@ type UserDB struct {
 	Role     string         `db:"role"`
 }
 
-func FromUserDB(p *UserDB) *usecase.User {
+func FromUserDB(p *UserDB) *entities.User {
 	var fio string
 	if p.FIO.Valid {
 		fio = p.FIO.String
@@ -39,7 +38,7 @@ func FromUserDB(p *UserDB) *usecase.User {
 		phone = p.Phone.String
 	}
 
-	return &usecase.User{
+	return &entities.User{
 		ID:       p.ID,
 		FIO:      fio,
 		Login:    login,
@@ -50,19 +49,19 @@ func FromUserDB(p *UserDB) *usecase.User {
 	}
 }
 
-const connStr = "user=postgres password=Wt2H1aqF dbname=lanta sslmode=disable"
-
-func GetDB() (*sql.DB, error) {
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
-}
+//const connStr = "user=postgres password=Wt2H1aqF dbname=lanta sslmode=disable"
+//
+////func GetDB() (*sql.DB, error) {
+////	db, err := sql.Open("postgres", connStr)
+////	if err != nil {
+////		return nil, err
+////	}
+////	return db, nil
+////}
 
 // AddUser  - add user to db
-func AddUser(ctx context.Context, usr *usecase.User) (int64, error) {
-	db, err := GetDB()
+func (s *Storage) AddUser(ctx context.Context, usr *entities.User) (int64, error) {
+	db, err := s.GetDB()
 	if err != nil {
 		return 0, err
 	}
@@ -86,8 +85,8 @@ func AddUser(ctx context.Context, usr *usecase.User) (int64, error) {
 }
 
 // GetUserById - get user by id
-func GetUserById(ctx context.Context, id int64) (*usecase.User, error) {
-	db, err := GetDB()
+func (s *Storage) GetUserById(ctx context.Context, id int64) (*entities.User, error) {
+	db, err := s.GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +102,41 @@ func GetUserById(ctx context.Context, id int64) (*usecase.User, error) {
 	if err = row.Scan(&usr.Role); err != nil {
 		return nil, err
 	}
-	var user *usecase.User
+	var user *entities.User
 	user = FromUserDB(&usr)
 	return user, nil
+}
+
+func (s *Storage) LoginUserStorage(ctx context.Context, usr string) (int64, string, error) {
+	db, err := s.GetDB()
+	if err != nil {
+		return 0, "", err
+	}
+	query := "SELECT id,password from \"user\" WHERE login=$1"
+	var pwd string
+	var id int64
+	row := db.QueryRowContext(ctx, query, usr)
+
+	if err = row.Scan(&id, &pwd); err != nil {
+		return 0, "", err
+	}
+	return id, pwd, nil
+}
+
+func (s *Storage) SignUpStorage(ctx context.Context, usr string, pwd string) (int64, error) { //registration
+	db, err := s.GetDB()
+	if err != nil {
+		return 0, err
+	}
+	query := "INSERT INTO \"user\" (username, password) VALUES ($1, $2) returning id"
+	var id int64
+	row := db.QueryRowContext(ctx, query, usr, pwd)
+	if row.Err() != nil {
+		return 0, row.Err()
+	}
+	err = row.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
