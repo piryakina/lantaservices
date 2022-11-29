@@ -4,22 +4,25 @@ import (
 	"context"
 	"golang.org/x/crypto/bcrypt"
 	"lantaservice/entities"
+	"lantaservice/storage"
 )
 
-type UserServer interface {
-	SignUpUser(ctx context.Context, usr *entities.User) (int64, error)
-	SignUpSP(ctx context.Context, usr *entities.SP) (int64, error)
-}
-type ServiceUser struct {
-	UserRepository entities.UserRepository
-}
+//type UserServer interface {
+//	SignUpUser(usr *entities.User) (int64, error)
+//	SignUpSP(ctx context.Context, usr *entities.SP) (int64, error)
+//}
+//type ServiceUser struct {
+//	UserRepository entities.UserRepository
+//}
 
-func (s *ServiceUser) SignUpUser(ctx context.Context, usr *entities.User) (int64, error) { //registration
+func SignUpUser(ctx context.Context, usr *entities.User) (int64, error) { //registration  (s *ServiceUser)
 	hash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return 0, err
 	}
-	id, err := s.UserRepository.SignUpStorage(ctx, usr.Login, string(hash))
+	//id, err := s.UserRepository.SignUpStorage(usr.Login, string(hash))
+	usr.Password = string(hash)
+	id, err := storage.AddUser(ctx, usr)
 	if err != nil {
 		return 0, err
 	}

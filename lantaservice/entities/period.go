@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"context"
 	"time"
 )
 
@@ -11,8 +10,9 @@ type Period struct {
 	DateTo   time.Time `json:"date_to"`
 	Title    string    `json:"title"`
 }
-type PeriodRepository interface {
-	GetPeriodNowStorage(ctx context.Context) (*Period, error)
-	AddNewPeriodStorage(ctx context.Context, p *Period) error
-	GetAllPeriodStorage(ctx context.Context) ([]*Period, error)
-}
+
+//type PeriodRepository interface {
+//	GetPeriodNowStorage(ctx context.Context) (*Period, error)
+//	AddNewPeriodStorage(ctx context.Context, p *Period) error
+//	GetAllPeriodStorage(ctx context.Context) ([]*Period, error)
+//}

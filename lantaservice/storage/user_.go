@@ -60,8 +60,9 @@ func FromUserDB(p *UserDB) *entities.User {
 ////}
 
 // AddUser  - add user to db
-func (s *Storage) AddUser(ctx context.Context, usr *entities.User) (int64, error) {
-	db, err := s.GetDB()
+func AddUser(ctx context.Context, usr *entities.User) (int64, error) {
+	//(s * Storage)
+	db, err := GetDB()
 	if err != nil {
 		return 0, err
 	}
@@ -85,8 +86,8 @@ func (s *Storage) AddUser(ctx context.Context, usr *entities.User) (int64, error
 }
 
 // GetUserById - get user by id
-func (s *Storage) GetUserById(ctx context.Context, id int64) (*entities.User, error) {
-	db, err := s.GetDB()
+func GetUserById(ctx context.Context, id int64) (*entities.User, error) {
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -107,8 +108,8 @@ func (s *Storage) GetUserById(ctx context.Context, id int64) (*entities.User, er
 	return user, nil
 }
 
-func (s *Storage) LoginUserStorage(ctx context.Context, usr string) (int64, string, error) {
-	db, err := s.GetDB()
+func LoginUserStorage(ctx context.Context, usr string) (int64, string, error) {
+	db, err := GetDB()
 	if err != nil {
 		return 0, "", err
 	}
@@ -123,20 +124,20 @@ func (s *Storage) LoginUserStorage(ctx context.Context, usr string) (int64, stri
 	return id, pwd, nil
 }
 
-func (s *Storage) SignUpStorage(ctx context.Context, usr string, pwd string) (int64, error) { //registration
-	db, err := s.GetDB()
-	if err != nil {
-		return 0, err
-	}
-	query := "INSERT INTO \"user\" (username, password) VALUES ($1, $2) returning id"
-	var id int64
-	row := db.QueryRowContext(ctx, query, usr, pwd)
-	if row.Err() != nil {
-		return 0, row.Err()
-	}
-	err = row.Scan(&id)
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
-}
+//func SignUpStorage(usr string, pwd string) (int64, error) { //registration
+//	db, err := GetDB()
+//	if err != nil {
+//		return 0, err
+//	}
+//	query := "INSERT INTO \"user\" (login, password) VALUES ($1, $2) returning id"
+//	var id int64
+//	row := db.QueryRow(query, usr, pwd)
+//	if row.Err() != nil {
+//		return 0, row.Err()
+//	}
+//	err = row.Scan(&id)
+//	if err != nil {
+//		return 0, err
+//	}
+//	return id, nil
+//}

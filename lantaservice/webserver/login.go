@@ -3,10 +3,11 @@ package webserver
 import (
 	"encoding/json"
 	"lantaservice/entities"
+	"lantaservice/usecase"
 	"net/http"
 )
 
-func (s *HttpServer) Login(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 	ctx := r.Context()
 	c := &entities.UserLogin{}
 	err := json.NewDecoder(r.Body).Decode(c)
@@ -15,7 +16,7 @@ func (s *HttpServer) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var id int64
-	id, err = s.CatalogService.Login(ctx, c)
+	id, err = usecase.Login(ctx, c)
 	if err != nil {
 		ErrorResponse(w, err)
 		return

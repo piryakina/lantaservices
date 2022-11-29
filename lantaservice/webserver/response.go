@@ -18,6 +18,10 @@ type StatusId struct {
 	Id int64 `json:"id"`
 }
 
+func test(w http.ResponseWriter, r *http.Request) {
+	JsonResponse(w, "hello", 200)
+}
+
 func Index(w http.ResponseWriter, r *http.Request) {
 	c, err := GetSession(r)
 

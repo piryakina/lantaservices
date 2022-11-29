@@ -3,10 +3,11 @@ package webserver
 import (
 	"encoding/json"
 	"lantaservice/entities"
+	"lantaservice/usecase"
 	"net/http"
 )
 
-func (s *HttpServer) AddNews(w http.ResponseWriter, r *http.Request) {
+func AddNews(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c := &entities.News{}
 	err := json.NewDecoder(r.Body).Decode(c)
@@ -14,7 +15,7 @@ func (s *HttpServer) AddNews(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
-	err = s.CatalogService.AddNews(ctx, c)
+	err = usecase.AddNews(ctx, c)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
@@ -25,10 +26,10 @@ func (s *HttpServer) AddNews(w http.ResponseWriter, r *http.Request) {
 	}, 200)
 }
 
-func (s *HttpServer) GetNews(w http.ResponseWriter, r *http.Request) {
+func GetNews(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var news []*entities.News
-	news, err := s.CatalogService.GetNews(ctx)
+	news, err := usecase.GetNews(ctx)
 	if err != nil {
 		ErrorResponse(w, err)
 		return

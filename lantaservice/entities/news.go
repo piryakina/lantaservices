@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"context"
 	"time"
 )
 
@@ -12,7 +11,7 @@ type News struct {
 	Date  time.Time `json:"date"`
 }
 
-type NewsRepository interface {
-	GetNewsStorage(ctx context.Context) ([]*News, error)
-	AddNewsStorage(ctx context.Context, p *News) error
-}
+//type NewsRepository interface {
+//	GetNewsStorage(ctx context.Context) ([]*News, error)
+//	AddNewsStorage(ctx context.Context, p *News) error
+//}

@@ -1,9 +1,5 @@
 package entities
 
-import (
-	"context"
-)
-
 type UserLogin struct {
 	Id       int64
 	Login    string
@@ -11,13 +7,13 @@ type UserLogin struct {
 }
 
 type User struct {
-	ID       int64  `json:"id"`
-	FIO      string `json:"fio"`
-	Login    string `json:"login"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
+	ID       int64  `json:"id,omitempty"`
+	FIO      string `json:"fio,omitempty"`
+	Login    string `json:"login,omitempty"`
+	Password string `json:"password,omitempty"`
+	Email    string `json:"email,omitempty"`
 	Phone    string `json:"phone,omitempty"`
-	Role     string `json:"role"`
+	Role     string `json:"role,omitempty"`
 }
 
 type SP struct {
@@ -29,13 +25,14 @@ type SP struct {
 	Phone       string `json:"phone,omitempty"`
 }
 
-type UserRepository interface {
-	SignUpStorage(ctx context.Context, usr string, pwd string) (int64, error)
-	LoginUserStorage(ctx context.Context, usr string) (int64, string, error)
-	GetUserById(ctx context.Context, id int64) (*User, error)
-	AddUser(ctx context.Context, usr *User) (int64, error)
-
-	AddSP(ctx context.Context, sp *SP) (int64, error)
-	LoginSpStorage(ctx context.Context, usr string) (int64, string, error)
-	GetSPById(ctx context.Context, id int64) (*SP, error)
-}
+//
+//type UserRepository interface {
+//	SignUpStorage(usr string, pwd string) (int64, error)
+//	LoginUserStorage(ctx context.Context, usr string) (int64, string, error)
+//	GetUserById(ctx context.Context, id int64) (*User, error)
+//	AddUser(ctx context.Context, usr *User) (int64, error)
+//
+//	AddSP(ctx context.Context, sp *SP) (int64, error)
+//	LoginSpStorage(ctx context.Context, usr string) (int64, string, error)
+//	GetSPById(ctx context.Context, id int64) (*SP, error)
+//}

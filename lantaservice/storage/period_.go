@@ -2,31 +2,33 @@ package storage
 
 import (
 	"context"
-	"database/sql"
 	"lantaservice/entities"
+	"log"
 	"time"
 )
 
 type PeriodDB struct {
-	Id       int64          `json:"id"`
-	DateFrom sql.NullTime   `json:"date_from"`
-	DateTo   sql.NullTime   `json:"date_to"`
-	Title    sql.NullString `json:"title"`
+	Id       int64  `json:"id"`
+	DateFrom string `json:"date_from"`
+	DateTo   string `json:"date_to"`
+	Title    string `json:"title"`
 }
 
 func FromPeriodDB(p PeriodDB) *entities.Period {
+	layout := "2006-01-02 15:04:05Z" //todo yyyy-mm-dd
 	var dateFrom time.Time
-	if p.DateFrom.Valid {
-		dateFrom = p.DateFrom.Time
+	dateFrom, err := time.Parse(layout, p.DateFrom)
+	if err != nil {
+		log.Fatal(err)
 	}
 	var dateTo time.Time
-	if p.DateTo.Valid {
-		dateTo = p.DateTo.Time
+	dateTo, err = time.Parse(layout, p.DateTo)
+	if err != nil {
+		log.Fatal(err)
 	}
 	var title string
-	if p.Title.Valid {
-		title = p.Title.String
-	}
+	title = p.Title
+
 	return &entities.Period{
 		Id:       p.Id,
 		DateFrom: dateFrom,
@@ -34,20 +36,23 @@ func FromPeriodDB(p PeriodDB) *entities.Period {
 		Title:    title,
 	}
 }
-func (s *Storage) GetPeriodNowStorage(ctx context.Context) (*entities.Period, error) {
-	db, err := s.GetDB()
+func GetPeriodNowStorage(ctx context.Context, date time.Time) (*entities.Period, error) {
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
-	query := ""
-	row := db.QueryRowContext(ctx, query)
-	if row.Err() != nil {
+	query := "SELECT * FROM period WHERE $1 between date_from and date_to"
+	row := db.QueryRowContext(ctx, query, date)
+	var period *entities.Period
+	var temp PeriodDB
+	if err = row.Scan(&temp.Id, &temp.DateFrom, &temp.DateTo, &temp.Title); err != nil {
 		return nil, err
 	}
-	return nil, nil
+	period = FromPeriodDB(temp)
+	return period, nil
 }
-func (s *Storage) GetAllPeriodStorage(ctx context.Context) ([]*entities.Period, error) {
-	db, err := s.GetDB()
+func GetAllPeriodStorage(ctx context.Context) ([]*entities.Period, error) {
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +69,8 @@ func (s *Storage) GetAllPeriodStorage(ctx context.Context) ([]*entities.Period, 
 	defer rows.Close()
 	return prds, nil
 }
-func (s *Storage) AddNewPeriodStorage(ctx context.Context, p *entities.Period) error {
-	db, err := s.GetDB()
+func AddNewPeriodStorage(ctx context.Context, p *entities.Period) error {
+	db, err := GetDB()
 	if err != nil {
 		return err
 	}

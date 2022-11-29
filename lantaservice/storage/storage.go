@@ -3,13 +3,14 @@ package storage
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 const (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = "Wt2H1aqF"
+	password = "winx2011"
 	dbname   = "lanta"
 )
 
@@ -17,7 +18,7 @@ type Storage struct {
 	Db *sqlx.DB
 }
 
-func (s *Storage) GetDB() (*sqlx.DB, error) {
+func GetDB() (*sqlx.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)

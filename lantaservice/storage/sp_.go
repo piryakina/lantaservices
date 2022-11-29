@@ -48,8 +48,8 @@ func FromSPDB(p *SPDB) *entities.SP {
 }
 
 // AddSP - add sp to db
-func (s *Storage) AddSP(ctx context.Context, sp *entities.SP) (int64, error) {
-	db, err := s.GetDB()
+func AddSP(ctx context.Context, sp *entities.SP) (int64, error) {
+	db, err := GetDB()
 	if err != nil {
 		return 0, err
 	}
@@ -63,8 +63,8 @@ func (s *Storage) AddSP(ctx context.Context, sp *entities.SP) (int64, error) {
 }
 
 // GetSPById - get sp by id
-func (s *Storage) GetSPById(ctx context.Context, id int64) (*entities.SP, error) {
-	db, err := s.GetDB()
+func GetSPById(ctx context.Context, id int64) (*entities.SP, error) {
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -78,8 +78,8 @@ func (s *Storage) GetSPById(ctx context.Context, id int64) (*entities.SP, error)
 	partner = FromSPDB(&sp)
 	return partner, nil
 }
-func (s *Storage) LoginSpStorage(ctx context.Context, usr string) (int64, string, error) {
-	db, err := s.GetDB()
+func LoginSpStorage(ctx context.Context, usr string) (int64, string, error) {
+	db, err := GetDB()
 	if err != nil {
 		return 0, "", err
 	}

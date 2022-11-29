@@ -1,6 +1,15 @@
 package storage
 
-import "context"
+import (
+	"context"
+	"io"
+	"lantaservice/entities"
+	"log"
+	"mime/multipart"
+	"os"
+	"path/filepath"
+	"strings"
+)
 
 type FileDB struct {
 	Id       int64  `db:"id"`
@@ -10,6 +19,67 @@ type FileDB struct {
 	Owner    int64  `db:"owner"`
 }
 
-func (s *Storage) GetFileByOwnerId(ctx context.Context, id int64) {
+func GetFileByOwnerId(ctx context.Context, id int64) {
 
 }
+func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File) (*string, error) {
+	fullPath := filepath.Join(fu.AbsPath, fu.Folder)
+	err := os.MkdirAll(fullPath, 0777)
+	if err != nil {
+		return nil, err
+	}
+	fileName := header.Filename
+	fileNameRelative := filepath.Join(fu.Folder, fileName)
+	fileNameAbs := filepath.Join(fullPath, fileName)
+	out, err := os.Create(fileNameAbs)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := out.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+	_, err = io.Copy(out, f)
+	if err != nil {
+		return nil, err
+	}
+	if strings.Contains(fullPath, "billing") {
+		err = SaveBilling(fileName, fileNameRelative)
+		if err != nil {
+			return nil, err
+		}
+		//} else if strings.Contains(fullPath, "test-list") {
+		//	err = s.SaveTestList(fileName, fileNameRelative)
+		//	if err != nil {
+		//		return nil, err
+		//	}
+	}
+
+	return &fileNameRelative, nil
+}
+func SaveBilling(filename string, path string) error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+	query := "INSERT INTO file (filename, path, owner, data) VALUES ($1, $2)"
+	row := db.QueryRow(query, filename, path)
+	if row.Err() != nil {
+		return row.Err()
+	}
+	return nil
+}
+
+//func (s *Storage) SaveTestList(filename string, path string) error {
+//	db, err := s.GetDB()
+//	if err != nil {
+//		return err
+//	}
+//	query := "INSERT INTO test_list (filename, path) VALUES ($1, $2)"
+//	row := db.QueryRow(query, filename, path)
+//	if row.Err() != nil {
+//		return row.Err()
+//	}
+//	return nil
+//}

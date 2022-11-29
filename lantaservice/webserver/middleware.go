@@ -12,7 +12,7 @@ func SessionMiddleware(inner http.Handler) http.Handler {
 		userSession, err := GetSession(r)
 		if err != nil {
 			// if session not exist and page is not internal
-			log := strings.Contains(r.URL.Path, "login")
+			log := strings.Contains(r.URL.Path, "login") || strings.Contains(r.URL.Path, "add-user") || strings.Contains(r.URL.Path, "add-sp") //TODO убрать мидлварю по test
 			//sign := strings.Contains(r.URL.Path, "signin")
 			if log {
 				inner.ServeHTTP(w, r)

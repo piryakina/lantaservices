@@ -35,8 +35,8 @@ func fromNewsDB(p NewsDB) *entities.News {
 	}
 }
 
-func (s *Storage) GetNewsStorage(ctx context.Context) ([]*entities.News, error) {
-	db, err := s.GetDB()
+func GetNewsStorage(ctx context.Context) ([]*entities.News, error) {
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -53,8 +53,8 @@ func (s *Storage) GetNewsStorage(ctx context.Context) ([]*entities.News, error) 
 	return news, nil
 }
 
-func (s *Storage) AddNewsStorage(ctx context.Context, p *entities.News) error {
-	db, err := s.GetDB()
+func AddNewsStorage(ctx context.Context, p *entities.News) error {
+	db, err := GetDB()
 	if err != nil {
 		return err
 	}
