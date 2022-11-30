@@ -9,18 +9,16 @@ import (
 )
 
 func main() {
-	//s := webserver.NewHttpServer()
 	Router := webserver.NewRouter()
-	//Router.Use(webserver.SessionMiddleware)
-	//Router.Use(webserver.MiddlewareCors)
+	Router.Use(webserver.SessionMiddleware)
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200"},
 		AllowCredentials: true,
 	})
-	c.Handler(Router)
+
 	http.Handle("/", Router)
 	fmt.Println("Сервер запущен")
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", c.Handler(Router))
 	if err != nil {
 		log.Fatal(err)
 	}

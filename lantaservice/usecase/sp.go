@@ -5,6 +5,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"lantaservice/entities"
 	"lantaservice/storage"
+	"time"
 )
 
 func SignUpSP(ctx context.Context, usr *entities.SP) (int64, error) { //registration(s *ServiceUser)
@@ -18,6 +19,22 @@ func SignUpSP(ctx context.Context, usr *entities.SP) (int64, error) { //registra
 		return 0, err
 	}
 	return id, nil
+}
+
+func GetDataSpPeriod(ctx context.Context, login string, date time.Time) (*entities.SpPeriod, error) {
+	res, err := storage.GetDataSpPeriodStorage(ctx, login, date)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func AddDataSpPeriod(ctx context.Context, date *entities.SpPeriod) error {
+	err := storage.AddDataSpPeriodStorage(ctx, date)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //func GetSPById(ctx context.Context, usr *entities.SP) (int64, error) { //registration(s *ServiceUser)

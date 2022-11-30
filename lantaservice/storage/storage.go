@@ -8,9 +8,9 @@ import (
 
 const (
 	host     = "localhost"
-	port     = 5432
+	port     = 6543
 	user     = "postgres"
-	password = "winx2011"
+	password = "Wt2H1aqF"
 	dbname   = "lanta"
 )
 
@@ -26,7 +26,6 @@ func GetDB() (*sqlx.DB, error) {
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Println("connected on :5432")
 	err = db.Ping()
 	if err != nil {
 		panic(err)

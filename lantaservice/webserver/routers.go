@@ -31,6 +31,7 @@ func Routing() []Route {
 		{"logout", "GET", "/logout", Logout},
 		//users
 		{"add-user", "POST", "/admin/add-user", AddUser},
+		{"add-user", "GET", "/user", GetUserRoleById},
 		//{"edit-user", "POST", "/admin/edit-user", nil},
 		{"add-sp", "POST", "/admin/add-sp", AddSp},
 		//{"edit-sp", "POST", "/admin/edit-sp", nil},
@@ -45,7 +46,8 @@ func Routing() []Route {
 		{"get-news", "GET", "/news", GetNews},
 
 		//services partner
-		{"get-quality-and-process", "GET", "/process", nil},
+		{"get-quality-and-process", "GET", "/sp-period", GetDataSpPeriodNow},
+		{"add-quality-and-process", "POST", "/add/sp-period", AddDataSpPeriodNow},
 		//add billing by sp
 		{"upload-file", "POST", "/billings/upload", nil},
 		//add score by sp

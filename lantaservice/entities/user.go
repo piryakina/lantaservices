@@ -24,6 +24,10 @@ type SP struct {
 	Email       string `json:"email,omitempty"`
 	Phone       string `json:"phone,omitempty"`
 }
+type Role struct {
+	Id   int64  `json:"id,omitempty"`
+	Role string `json:"role,omitempty"`
+}
 
 //
 //type UserRepository interface {

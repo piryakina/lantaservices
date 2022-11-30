@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"lantaservice/entities"
+	"time"
 )
 
 type SPDB struct {
@@ -12,7 +13,16 @@ type SPDB struct {
 	Email       sql.NullString `db:"email"`
 	Phone       sql.NullString `db:"phone"`
 	Login       sql.NullString `db:"login"`
-	Password    sql.NullString `db:"password""`
+	Password    sql.NullString `db:"password"`
+}
+
+type SpPeriodDB struct {
+	ID       int64          `db:"id"`
+	SP       sql.NullString `db:"sp"`
+	Period   sql.NullString `db:"period"`
+	Quality  sql.NullString `db:"quality"`
+	Invoice  sql.NullString `db:"invoice"`
+	Vehicles int64          `db:"vehicle_service"`
 }
 
 func FromSPDB(p *SPDB) *entities.SP {
@@ -44,6 +54,36 @@ func FromSPDB(p *SPDB) *entities.SP {
 		Email:       mail,
 		Phone:       phone,
 		NameCompany: n,
+	}
+}
+
+func FromSPPeriodDB(p *SpPeriodDB) *entities.SpPeriod {
+	var sp string
+	if p.SP.Valid {
+		sp = p.SP.String
+	}
+	var per string
+	if p.Period.Valid {
+		per = p.Period.String
+	}
+	var qu string
+	if p.Quality.Valid {
+		qu = p.Quality.String
+	}
+	var inv string
+	if p.Invoice.Valid {
+		inv = p.Invoice.String
+	}
+	return &entities.SpPeriod{
+		ID:      p.ID,
+		Sp:      sp,
+		Period:  per,
+		Quality: qu,
+		Invoice: entities.InvoiceFile{
+			Filename: inv,
+			Date:     time.Time{},
+		},
+		Vehicle: p.Vehicles,
 	}
 }
 
@@ -92,4 +132,68 @@ func LoginSpStorage(ctx context.Context, usr string) (int64, string, error) {
 		return 0, "", err
 	}
 	return id, pwd, nil
+}
+
+func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (*entities.SpPeriod, error) {
+	db, err := GetDB()
+	if err != nil {
+		return nil, err
+	}
+	var idSp, idPeriod int64
+	var temp SpPeriodDB
+	query := "SELECT id,name_company from sp WHERE login=$1"
+	row := db.QueryRowContext(ctx, query, login)
+	if err = row.Scan(&idSp, &temp.SP); err != nil {
+		return nil, err
+	}
+	query = "SELECT id,title FROM period WHERE $1 between date_from and date_to"
+	row = db.QueryRowContext(ctx, query, date)
+	if err = row.Scan(&idPeriod, &temp.Period); err != nil {
+		return nil, err
+	}
+	query = "SELECT t1.vehicle_service,t1.quality, (select filename as invoice from invoice_file as t2 where t2.id=t1.invoice) from sp_period as t1 where t1.sp=$1 and t1.period=$2"
+	row = db.QueryRowContext(ctx, query, idSp, idPeriod)
+	if err != nil {
+		return nil, err
+	}
+	var res *entities.SpPeriod
+
+	if err = row.Scan(&temp.Vehicles, &temp.Quality, &temp.Invoice); err != nil {
+		return nil, err
+	} //res = append(res)
+	res = FromSPPeriodDB(&temp)
+	return res, nil
+}
+
+func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+	query := "SELECT id from sp WHERE name_company=$1"
+	row := db.QueryRowContext(ctx, query, data.Sp)
+	var idSP, idPeriod, idInvoice int64
+	if err = row.Scan(&idSP); err != nil {
+		return err
+	}
+	query = "SELECT id FROM period WHERE title=$1 "
+	row = db.QueryRowContext(ctx, query, data.Period)
+	if err = row.Scan(&idPeriod); err != nil {
+		return err
+	}
+	//query = "SELECT t1.vehicle_service,t1.quality, (select filename as invoice from invoice_file as t2 where t2.id=t1.invoice) from sp_period as t1 where t1.sp=$1 and t1.period=$2"
+	if data.Invoice.Filename != "" {
+		query = "insert into invoice_file (filename, path, date) VALUES ($1,$2,$3) returning id"
+		data.Invoice.Date = time.Now()
+		row = db.QueryRowContext(ctx, query, data.Invoice.Filename, data.Invoice.Path, data.Invoice.Date)
+		if err = row.Scan(&idInvoice); err != nil {
+			return err
+		}
+	}
+	query = "insert into sp_period (sp,period,invoice, vehicle_service,quality) VALUES ($1,$2,$3,$4,$5)"
+	row = db.QueryRowContext(ctx, query, idSP, idPeriod, idInvoice, data.Vehicle, data.Quality)
+	if err != nil {
+		return err
+	}
+	return nil
 }

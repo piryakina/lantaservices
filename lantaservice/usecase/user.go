@@ -28,6 +28,13 @@ func SignUpUser(ctx context.Context, usr *entities.User) (int64, error) { //regi
 	}
 	return id, nil
 }
+func GetRoleUserById(ctx context.Context, id int64) (string, error) {
+	role, err := storage.GetUserRoleById(ctx, id)
+	if err != nil {
+		return "", err
+	}
+	return role, nil
+}
 
 type Hash struct{}
 
