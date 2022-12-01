@@ -23,6 +23,13 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
+	c := &entities.User{}
+	err = json.NewDecoder(r.Body).Decode(c)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	stat := &entities.DocStatus{} //todo new struct??
 	path, err := os.Getwd()
 	if err != nil {
 		ErrorResponse(w, err)
@@ -32,7 +39,7 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 		Folder:  "upload/billings",
 		AbsPath: path,
 	}
-	localPath := usecase.UploadFile(f, h, &file)
+	localPath := usecase.UploadFile(f, h, &file, c)
 	j, err := json.Marshal(map[string]string{"Url": *localPath})
 	if err != nil {
 		ErrorResponse(w, err)
@@ -50,12 +57,19 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 func UploadInvoice(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 150<<20)
 	f, h, err := r.FormFile("file")
+
 	defer func() {
 		if err := f.Close(); err != nil {
 			ErrorResponse(w, err)
 			return
 		}
 	}()
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	c := &entities.User{}
+	err = json.NewDecoder(r.Body).Decode(c)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
@@ -69,7 +83,7 @@ func UploadInvoice(w http.ResponseWriter, r *http.Request) {
 		Folder:  "upload/invoice",
 		AbsPath: path,
 	}
-	localPath := usecase.UploadFile(f, h, &file)
+	localPath := usecase.UploadFile(f, h, &file, c)
 	j, err := json.Marshal(map[string]string{"Url": *localPath})
 	if err != nil {
 		ErrorResponse(w, err)

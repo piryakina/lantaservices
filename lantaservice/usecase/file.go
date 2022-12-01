@@ -15,8 +15,8 @@ import (
 //}
 
 // UploadFile upload file
-func UploadFile(f multipart.File, h *multipart.FileHeader, fu *entities.File) *string { //(s *ServiceFile)
-	localPath, err := storage.SaveFile(f, h, fu)
+func UploadFile(f multipart.File, h *multipart.FileHeader, fu *entities.File, usr *entities.User) *string { //(s *ServiceFile)
+	localPath, err := storage.SaveFile(f, h, fu, usr)
 	if err != nil {
 		return nil
 	}
@@ -24,8 +24,8 @@ func UploadFile(f multipart.File, h *multipart.FileHeader, fu *entities.File) *s
 }
 
 // UploadFile upload file
-func UploadInvoice(f multipart.File, h *multipart.FileHeader, fu *entities.File) *string { //(s *ServiceFile)
-	localPath, err := storage.SaveFile(f, h, fu)
+func UploadInvoice(f multipart.File, h *multipart.FileHeader, fu *entities.File, usr *entities.User) *string { //(s *ServiceFile)
+	localPath, err := storage.SaveFile(f, h, fu, usr)
 	if err != nil {
 		return nil
 	}
