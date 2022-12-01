@@ -5,26 +5,25 @@ import (
 	"lantaservice/entities"
 	"lantaservice/usecase"
 	"net/http"
-	"strconv"
 	"time"
 )
 
-func AddSp(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	c := &entities.SP{}
-	err := json.NewDecoder(r.Body).Decode(c)
-	if err != nil {
-		ErrorResponse(w, err)
-		return
-	}
-	id, err := usecase.SignUpSP(ctx, c)
-	if err != nil {
-		ErrorResponse(w, err)
-		return
-	}
-	JsonResponse(w, StatusResponse{Status: true,
-		Detail: strconv.FormatInt(id, 10)}, 200)
-}
+//func AddSp(w http.ResponseWriter, r *http.Request) {
+//	ctx := r.Context()
+//	c := &entities.SP{}
+//	err := json.NewDecoder(r.Body).Decode(c)
+//	if err != nil {
+//		ErrorResponse(w, err)
+//		return
+//	}
+//	id, err := usecase.SignUpSP(ctx, c)
+//	if err != nil {
+//		ErrorResponse(w, err)
+//		return
+//	}
+//	JsonResponse(w, StatusResponse{Status: true,
+//		Detail: strconv.FormatInt(id, 10)}, 200)
+//}
 
 func GetDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -57,3 +56,18 @@ func AddDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 		Detail: "success",
 	}, 200)
 }
+
+//func GetSPNameById(w http.ResponseWriter, r *http.Request) {
+//	ctx := r.Context()
+//	userSession, err := GetSession(r)
+//	name, err := usecase.GetSpNameById(ctx, userSession.ID)
+//	if err != nil {
+//		JsonResponse(w, StatusResponse{Status: true,
+//			Detail: ""}, 200)
+//		return
+//	}
+//	JsonResponse(w, StatusResponse{
+//		Status: true,
+//		Detail: name,
+//	}, 200)
+//}

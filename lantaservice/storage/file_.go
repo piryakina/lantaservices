@@ -55,6 +55,12 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File)
 		//		return nil, err
 		//	}
 	}
+	if strings.Contains(fullPath, "invoice") {
+		err = SaveInvoice(fileName, fileNameRelative)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &fileNameRelative, nil
 }
@@ -63,7 +69,19 @@ func SaveBilling(filename string, path string) error {
 	if err != nil {
 		return err
 	}
-	query := "INSERT INTO file (filename, path, owner, data) VALUES ($1, $2)"
+	query := "INSERT INTO file (filename, path, owner,status,sp_period_id, date) VALUES ($1, $2,$3,$4,$5)"
+	row := db.QueryRow(query, filename, path)
+	if row.Err() != nil {
+		return row.Err()
+	}
+	return nil
+}
+func SaveInvoice(filename string, path string) error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+	query := "INSERT INTO invoice_file (filename, path,sp_period_id,date) VALUES ($1, $2, $3,$4)"
 	row := db.QueryRow(query, filename, path)
 	if row.Err() != nil {
 		return row.Err()

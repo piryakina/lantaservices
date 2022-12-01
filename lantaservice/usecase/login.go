@@ -18,9 +18,6 @@ import (
 func Login(ctx context.Context, usr *entities.UserLogin) (int64, error) { //authorization (s *ServiceLogin)
 	id, res, err := storage.LoginUserStorage(ctx, usr.Login)
 	if err != nil {
-		id, res, err = storage.LoginSpStorage(ctx, usr.Login)
-	}
-	if err != nil {
 		return 0, err
 	}
 	return id, Compare(res, usr.Password)

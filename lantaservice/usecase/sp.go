@@ -37,6 +37,14 @@ func AddDataSpPeriod(ctx context.Context, date *entities.SpPeriod) error {
 	return nil
 }
 
+//func GetSpNameById(ctx context.Context, id int64) (string, error) {
+//	name, err := storage.GetSpNameByID(ctx, id)
+//	if err != nil {
+//		return "", err
+//	}
+//	return name, nil
+//}
+
 //func GetSPById(ctx context.Context, usr *entities.SP) (int64, error) { //registration(s *ServiceUser)
 //	hash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), bcrypt.DefaultCost)
 //	if err != nil {

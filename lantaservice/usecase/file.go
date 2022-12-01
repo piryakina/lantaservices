@@ -22,3 +22,12 @@ func UploadFile(f multipart.File, h *multipart.FileHeader, fu *entities.File) *s
 	}
 	return localPath
 }
+
+// UploadFile upload file
+func UploadInvoice(f multipart.File, h *multipart.FileHeader, fu *entities.File) *string { //(s *ServiceFile)
+	localPath, err := storage.SaveFile(f, h, fu)
+	if err != nil {
+		return nil
+	}
+	return localPath
+}

@@ -8,7 +8,7 @@ import (
 
 type UserDB struct {
 	ID       int64          `db:"id"`
-	FIO      sql.NullString `db:"fio"`
+	Name     sql.NullString `db:"name"`
 	Login    sql.NullString `db:"login"`
 	Password sql.NullString `db:"password"`
 	Email    sql.NullString `db:"email"`
@@ -17,9 +17,9 @@ type UserDB struct {
 }
 
 func FromUserDB(p *UserDB) *entities.User {
-	var fio string
-	if p.FIO.Valid {
-		fio = p.FIO.String
+	var name string
+	if p.Name.Valid {
+		name = p.Name.String
 	}
 	var login string
 	if p.Login.Valid {
@@ -40,7 +40,7 @@ func FromUserDB(p *UserDB) *entities.User {
 
 	return &entities.User{
 		ID:       p.ID,
-		FIO:      fio,
+		Name:     name,
 		Login:    login,
 		Password: pwd,
 		Email:    mail,
@@ -76,9 +76,9 @@ func AddUser(ctx context.Context, usr *entities.User) (int64, error) {
 	} else {
 		idRole = 1
 	}
-	query = "INSERT INTO \"user\" (fio, login, email, phone, password, \"role\") VALUES ($1,$2,$3,$4,$5,$6) returning id"
+	query = "INSERT INTO \"user\" (name, login, email, phone, password, \"role\") VALUES ($1,$2,$3,$4,$5,$6) returning id"
 	var id int64
-	row := db.QueryRowContext(ctx, query, usr.FIO, usr.Login, usr.Email, usr.Phone, usr.Password, idRole)
+	row := db.QueryRowContext(ctx, query, usr.Name, usr.Login, usr.Email, usr.Phone, usr.Password, idRole)
 	if err = row.Scan(&id); err != nil {
 		return 0, err
 	}
@@ -95,7 +95,7 @@ func GetUserById(ctx context.Context, id int64) (*entities.User, error) {
 	row := db.QueryRowContext(ctx, query, id)
 	var usr UserDB
 	var idRole int64
-	if err = row.Scan(&usr.ID, &usr.FIO, &usr.Email, &usr.Phone, &usr.Password, &idRole); err != nil {
+	if err = row.Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Phone, &usr.Password, &idRole); err != nil {
 		return nil, err
 	}
 	query = "SELECT role from role where id=$1"
@@ -144,23 +144,26 @@ func LoginUserStorage(ctx context.Context, usr string) (int64, string, error) {
 //	}
 //
 // GetUserById - get user by id
-func GetUserRoleById(ctx context.Context, id int64) (string, error) {
+func GetUserRoleById(ctx context.Context, id int64) (string, string, error) {
 	db, err := GetDB()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	query := "SELECT role from \"user\" WHERE id=$1"
-	row := db.QueryRowContext(ctx, query, id)
-	var idRole int64
-	if err = row.Scan(&idRole); err != nil {
-		return "", err
-	}
-	query = "SELECT role from role where id=$1"
-	row = db.QueryRowContext(ctx, query, idRole)
-	var role string
-	if err = row.Scan(&role); err != nil {
-		return "", err
-	}
+	if id != 0 {
+		query := "SELECT role,name from \"user\" WHERE id=$1"
+		row := db.QueryRowContext(ctx, query, id)
+		var idRole int64
+		var role, name string
+		if err = row.Scan(&idRole, &name); err != nil {
+			return "", "", err
+		}
+		query = "SELECT role from role where id=$1"
+		row = db.QueryRowContext(ctx, query, idRole)
+		if err = row.Scan(&role); err != nil {
+			return "", "", err
+		}
+		return role, name, nil
 
-	return role, nil
+	}
+	return "", "", nil
 }

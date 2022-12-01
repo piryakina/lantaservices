@@ -8,7 +8,7 @@ type UserLogin struct {
 
 type User struct {
 	ID       int64  `json:"id,omitempty"`
-	FIO      string `json:"fio,omitempty"`
+	Name     string `json:"name,omitempty"`
 	Login    string `json:"login,omitempty"`
 	Password string `json:"password,omitempty"`
 	Email    string `json:"email,omitempty"`

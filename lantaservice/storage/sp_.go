@@ -118,21 +118,22 @@ func GetSPById(ctx context.Context, id int64) (*entities.SP, error) {
 	partner = FromSPDB(&sp)
 	return partner, nil
 }
-func LoginSpStorage(ctx context.Context, usr string) (int64, string, error) {
-	db, err := GetDB()
-	if err != nil {
-		return 0, "", err
-	}
-	query := "SELECT id,password from \"user\" WHERE login=$1"
-	var pwd string
-	var id int64
-	row := db.QueryRowContext(ctx, query, usr)
 
-	if err = row.Scan(&id, &pwd); err != nil {
-		return 0, "", err
-	}
-	return id, pwd, nil
-}
+//func LoginSpStorage(ctx context.Context, usr string) (int64, string, error) {
+//	db, err := GetDB()
+//	if err != nil {
+//		return 0, "", err
+//	}
+//	query := "SELECT id,password from sp WHERE login=$1"
+//	var pwd string
+//	var id int64
+//	row := db.QueryRowContext(ctx, query, usr)
+//
+//	if err = row.Scan(&id, &pwd); err != nil {
+//		return 0, "", err
+//	}
+//	return id, pwd, nil
+//}
 
 func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (*entities.SpPeriod, error) {
 	db, err := GetDB()
@@ -141,7 +142,7 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	}
 	var idSp, idPeriod int64
 	var temp SpPeriodDB
-	query := "SELECT id,name_company from sp WHERE login=$1"
+	query := "SELECT id,name from \"user\" WHERE login=$1"
 	row := db.QueryRowContext(ctx, query, login)
 	if err = row.Scan(&idSp, &temp.SP); err != nil {
 		return nil, err
@@ -170,7 +171,7 @@ func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error 
 	if err != nil {
 		return err
 	}
-	query := "SELECT id from sp WHERE name_company=$1"
+	query := "SELECT id from \"user\" WHERE name=$1"
 	row := db.QueryRowContext(ctx, query, data.Sp)
 	var idSP, idPeriod, idInvoice int64
 	if err = row.Scan(&idSP); err != nil {
@@ -197,3 +198,17 @@ func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error 
 	}
 	return nil
 }
+
+//func GetSpNameByID(ctx context.Context, id int64) (string, error) {
+//	db, err := GetDB()
+//	if err != nil {
+//		return "", err
+//	}
+//	query := "SELECT name_company from sp WHERE id=$1"
+//	row := db.QueryRowContext(ctx, query, id)
+//	var name string
+//	if err = row.Scan(&name); err != nil {
+//		return "", err
+//	}
+//	return name, err
+//}

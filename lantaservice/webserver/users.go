@@ -28,13 +28,13 @@ func AddUser(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 func GetUserRoleById(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 	ctx := r.Context()
 	userSession, err := GetSession(r)
-	role, err := usecase.GetRoleUserById(ctx, userSession.ID)
+	role, name, err := usecase.GetRoleUserById(ctx, userSession.ID)
 	if err != nil {
-		JsonResponse(w, StatusResponse{Status: true,
+		JsonResponse(w, StatusResponse{Status: false,
 			Detail: "you aren't log in"}, 200)
 		return
 	}
-	JsonResponse(w, StatusResponse{Status: true,
-		Detail: role}, 200)
+	JsonResponse(w, UserResponse{Status: true,
+		Role: role, Name: name}, 200)
 	//JsonResponse(w, StatusResponse{Status: true}, 200)
 }
