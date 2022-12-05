@@ -15,10 +15,10 @@ import (
 //	UserRepository entities.UserRepository
 //}
 
-func Login(ctx context.Context, usr *entities.UserLogin) (int64, error) { //authorization (s *ServiceLogin)
-	id, res, err := storage.LoginUserStorage(ctx, usr.Login)
+func Login(ctx context.Context, usr *entities.UserLogin) (int64, string, string, error) { //authorization (s *ServiceLogin)
+	id, res, role, name, err := storage.LoginUserStorage(ctx, usr.Login)
 	if err != nil {
-		return 0, err
+		return 0, "", "", err
 	}
-	return id, Compare(res, usr.Password)
+	return id, role, name, Compare(res, usr.Password)
 }

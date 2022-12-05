@@ -15,8 +15,7 @@ func Login(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 		ErrorResponse(w, err)
 		return
 	}
-	var id int64
-	id, err = usecase.Login(ctx, c)
+	id, role, name, err := usecase.Login(ctx, c)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
@@ -31,8 +30,11 @@ func Login(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 		return
 	}
 
-	JsonResponse(w, StatusResponse{
-		Status: true, Detail: "session is active",
+	JsonResponse(w, UserResponse{
+		Status: true,
+		Id:     id,
+		Role:   role,
+		Name:   name,
 	}, 200)
 }
 func Logout(w http.ResponseWriter, r *http.Request) {

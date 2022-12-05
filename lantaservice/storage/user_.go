@@ -108,20 +108,25 @@ func GetUserById(ctx context.Context, id int64) (*entities.User, error) {
 	return user, nil
 }
 
-func LoginUserStorage(ctx context.Context, usr string) (int64, string, error) {
+func LoginUserStorage(ctx context.Context, usr string) (int64, string, string, string, error) {
 	db, err := GetDB()
 	if err != nil {
-		return 0, "", err
+		return 0, "", "", "", err
 	}
-	query := "SELECT id,password from \"user\" WHERE login=$1"
-	var pwd string
-	var id int64
+	query := "SELECT id,password,role,name from \"user\" WHERE login=$1"
+	var pwd, role, name string
+	var id, roleId int64
 	row := db.QueryRowContext(ctx, query, usr)
 
-	if err = row.Scan(&id, &pwd); err != nil {
-		return 0, "", err
+	if err = row.Scan(&id, &pwd, &roleId, &name); err != nil {
+		return 0, "", "", "", err
 	}
-	return id, pwd, nil
+	query = "SELECT role from role where id=$1"
+	row = db.QueryRowContext(ctx, query, roleId)
+	if err = row.Scan(&role); err != nil {
+		return 0, "", "", "", err
+	}
+	return id, pwd, role, name, nil
 }
 
 // func SignUpStorage(usr string, pwd string) (int64, error) { //registration
@@ -166,4 +171,24 @@ func GetUserRoleById(ctx context.Context, id int64) (string, string, error) {
 
 	}
 	return "", "", nil
+}
+func GetRoles(ctx context.Context) ([]string, error) {
+	db, err := GetDB()
+	if err != nil {
+		return nil, err
+	}
+	query := "SELECT role from role"
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	var roles []string
+	for rows.Next() {
+		var r string
+		if err = rows.Scan(&r); err != nil {
+			return nil, err
+		}
+		roles = append(roles, r)
+	}
+	return roles, nil
 }

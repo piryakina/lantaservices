@@ -7,11 +7,13 @@ import (
 )
 
 const (
-	host     = "localhost"
-	port     = 6543
+	host = "localhost"
+	//port     = 6543
+	port     = 5432
 	user     = "postgres"
-	password = "Wt2H1aqF"
-	dbname   = "lanta"
+	password = "winx2011"
+	//password = "Wt2H1aqF"
+	dbname = "lanta"
 )
 
 type Storage struct {

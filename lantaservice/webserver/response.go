@@ -16,6 +16,7 @@ type StatusResponse struct {
 }
 type UserResponse struct {
 	Status bool   `json:"status"`
+	Id     int64  `json:"id"`
 	Role   string `json:"role"`
 	Name   string `json:"name"`
 }

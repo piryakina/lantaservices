@@ -29,7 +29,7 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
-	stat := &entities.DocStatus{} //todo new struct??
+	//stat := &entities.DocStatus{} //todo new struct??
 	path, err := os.Getwd()
 	if err != nil {
 		ErrorResponse(w, err)
