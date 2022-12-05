@@ -35,6 +35,13 @@ func GetRoleUserById(ctx context.Context, id int64) (string, string, error) {
 	}
 	return role, name, nil
 }
+func GetUserRoles(ctx context.Context) ([]string, error) {
+	role, err := storage.GetRoles(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return role, nil
+}
 
 type Hash struct{}
 

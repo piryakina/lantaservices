@@ -38,3 +38,13 @@ func GetUserRoleById(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 		Role: role, Name: name}, 200)
 	//JsonResponse(w, StatusResponse{Status: true}, 200)
 }
+func GetRoles(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
+	ctx := r.Context()
+	roles, err := usecase.GetUserRoles(ctx)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	JsonResponse(w, roles, 200)
+	//JsonResponse(w, StatusResponse{Status: true}, 200)
+}

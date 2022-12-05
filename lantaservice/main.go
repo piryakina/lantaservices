@@ -12,7 +12,7 @@ func main() {
 	Router := webserver.NewRouter()
 	Router.Use(webserver.SessionMiddleware)
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowedOrigins:   []string{"http://localhost:4200", "https://dbc3-94-25-185-137.eu.ngrok.io"},
 		AllowCredentials: true,
 	})
 
