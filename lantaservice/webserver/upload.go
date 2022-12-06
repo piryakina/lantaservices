@@ -6,13 +6,19 @@ import (
 	"lantaservice/usecase"
 	"net/http"
 	"os"
+	"fmt"
 )
+
+type uploadedFile struct {
+	ID       int64  `json:"id,omitempty"`
+	status     string `json:"status,omitempty"`
+}
 
 // UploadFile upload file
 func UploadBilling(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 150<<20)
+	r.ParseMultipartForm(130<<17)
 	f, h, err := r.FormFile("file")
-
 	defer func() {
 		if err := f.Close(); err != nil {
 			ErrorResponse(w, err)
@@ -23,12 +29,17 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
+	fmt.Println("id: ", r.Form["id"])
+	fmt.Println("status: ", r.Form["status"])
 	c := &entities.User{}
-	err = json.NewDecoder(r.Body).Decode(c)
+	err = json.NewDecoder(r.Body).Decode(c.ID)
+	fmt.Println(err)
 	if err != nil {
+		fmt.Println("ВЫХОЖУ ТУТ")
 		ErrorResponse(w, err)
 		return
 	}
+	fmt.Println("ТУТ2")
 	//stat := &entities.DocStatus{} //todo new struct??
 	path, err := os.Getwd()
 	if err != nil {
