@@ -17,7 +17,7 @@ type uploadedFile struct {
 // UploadFile upload file
 func UploadBilling(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 150<<20)
-	r.ParseMultipartForm(130<<17)
+	// r.ParseMultipartForm(130<<17)
 	f, h, err := r.FormFile("file")
 	defer func() {
 		if err := f.Close(); err != nil {
@@ -29,10 +29,10 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
-	fmt.Println("id: ", r.Form["id"])
-	fmt.Println("status: ", r.Form["status"])
-	c := &entities.User{}
-	err = json.NewDecoder(r.Body).Decode(c.ID)
+	fmt.Println("id: ", r.Form["id"]) // все получение данных из формы
+	fmt.Println("status: ", r.Form["status"]) // все получение данных из формы
+	c := &entities.User{} 
+	err = json.NewDecoder(r.Body).Decode(c.ID) // пытается найти json, которого нет, и поэтому всё ломается
 	fmt.Println(err)
 	if err != nil {
 		fmt.Println("ВЫХОЖУ ТУТ")
