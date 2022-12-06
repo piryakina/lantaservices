@@ -1,0 +1,109 @@
+variables: 
+  FRONT_SRC_FOLDER: ./nn_invest/assets
+  FRONT_BUILD_FOLDER: build
+
+  BACK_SRC_FOLDER: .
+   
+stages:
+  - pre-deploy
+  - build
+  - post-deploy
+  - finalise
+
+image: alpine
+
+#####################################
+pre-deploy:
+  stage: pre-deploy
+  only: 
+    - develop
+    - master
+    - tmp
+  before_script:
+    - apk add --no-cache openssh-client
+    - command -v ssh-agent >/dev/null
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh && chmod 0700 ~/.ssh
+    - echo "$PRIVATE_KEY" | ssh-add -
+    - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+  script:
+    - ssh $REMOTE_USER@$REMOTE_HOST "rm -r $RESOURCE_PATH &> /dev/null ; mkdir -p $RESOURCE_PATH"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp -r $DEST_PATH/nn_invest/assets/build/video $RESOURCE_PATH/video || echo Video folder not found"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp -r $DEST_PATH/nn_invest/assets/build/images $RESOURCE_PATH/images || echo Images folder not found"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp -r $DEST_PATH/nn_invest/assets/build/upload $RESOURCE_PATH/upload || echo Upload folder not found"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp -r $DEST_PATH/nn_invest/assets/build/svg $RESOURCE_PATH/svg || echo Svg folder not found"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp $DEST_PATH/nn_invest/.env $RESOURCE_PATH/.env || echo .env folder not found"
+  variables:
+    RESOURCE_PATH: /opt/invest-main/resource/$CI_COMMIT_BRANCH
+    DEST_PATH: /opt/invest-main/main.invest.$CI_COMMIT_BRANCH
+
+#######################################
+build:
+  stage: build
+  image: node:14-alpine3.13
+  only: 
+    - develop
+    - master
+    - tmp
+  before_script:
+    - apk add --no-cache openssh-client git
+    - command -v ssh-agent >/dev/null
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh && chmod 0700 ~/.ssh
+    - echo "$PRIVATE_KEY" | ssh-add -
+    - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+  script:
+    - ssh $REMOTE_USER@$REMOTE_HOST "rm -r $DEST_PATH && mkdir $DEST_PATH"
+    - ssh $REMOTE_USER@$REMOTE_HOST "git clone $GIT_REPOSITORY $DEST_PATH && cd $DEST_PATH && git checkout $CI_COMMIT_BRANCH"
+    - ssh $REMOTE_USER@$REMOTE_HOST "export PATH=/usr/bin:$YARN_PATH && cd $DEST_PATH/nn_invest/assets && yarn install && yarn build"
+    - ls && pwd
+  variables:
+    DEST_PATH: /opt/invest-main/main.invest.$CI_COMMIT_BRANCH
+    GIT_REPOSITORY: git@gitlab.com:invest-nn/invest-main.git
+    YARN_PATH: /root/.nvm/versions/node/v12.22.12/bin
+
+#######################################
+post-deploy:
+  stage: post-deploy
+  only: 
+    - develop
+    - master
+    - tmp
+  before_script:
+    - apk add --no-cache openssh-client
+    - command -v ssh-agent >/dev/null
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh && chmod 0700 ~/.ssh
+    - echo "$PRIVATE_KEY" | ssh-add -
+    - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+  script:
+    #- ssh $REMOTE_USER@$REMOTE_HOST "rm -r $RESOURCE_PATH &> /dev/null"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp -r $RESOURCE_PATH/database $DEST_PATH/nn_invest/sql/database || echo Database folder not found"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp -r $RESOURCE_PATH/video $DEST_PATH/nn_invest/assets/build/video || echo Video folder not found"
+    #- ssh $REMOTE_USER@$REMOTE_HOST "cp -r $RESOURCE_PATH/images $DEST_PATH/nn_invest/assets/build/images || echo Images folder not found"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp -r $RESOURCE_PATH/upload $DEST_PATH/nn_invest/assets/build/upload || echo Upload folder not found"
+    #- ssh $REMOTE_USER@$REMOTE_HOST "cp -r $RESOURCE_PATH/svg $DEST_PATH/nn_invest/assets/build/svg || echo Svg folder not found"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cp $RESOURCE_PATH/.env $DEST_PATH/nn_invest/.env || echo .env folder not found"
+  variables:
+    RESOURCE_PATH: /opt/invest-main/resource/$CI_COMMIT_BRANCH
+    DEST_PATH: /opt/invest-main/main.invest.$CI_COMMIT_BRANCH
+
+#######################################
+restart:
+  stage: finalise
+  only: 
+    - develop
+    - master
+    - tmp
+  before_script:
+    - apk add --no-cache openssh-client
+    - command -v ssh-agent >/dev/null
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh && chmod 0700 ~/.ssh
+    - echo "$PRIVATE_KEY" | ssh-add -
+    - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+  script:
+    - ssh $REMOTE_USER@$REMOTE_HOST "cd $DEST_PATH && docker-compose -f docker-compose.yaml down"
+    - ssh $REMOTE_USER@$REMOTE_HOST "cd $DEST_PATH && docker-compose -p $CI_COMMIT_BRANCH -f docker-compose.yaml up --remove-orphans -d"
+  variables:
+    DEST_PATH: /opt/invest-main/main.invest.$CI_COMMIT_BRANCH

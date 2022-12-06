@@ -57,17 +57,32 @@ func AddDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	}, 200)
 }
 
-//func GetSPNameById(w http.ResponseWriter, r *http.Request) {
-//	ctx := r.Context()
-//	userSession, err := GetSession(r)
-//	name, err := usecase.GetSpNameById(ctx, userSession.ID)
-//	if err != nil {
-//		JsonResponse(w, StatusResponse{Status: true,
-//			Detail: ""}, 200)
-//		return
+//	func GetSPNameById(w http.ResponseWriter, r *http.Request) {
+//		ctx := r.Context()
+//		userSession, err := GetSession(r)
+//		name, err := usecase.GetSpNameById(ctx, userSession.ID)
+//		if err != nil {
+//			JsonResponse(w, StatusResponse{Status: true,
+//				Detail: ""}, 200)
+//			return
+//		}
+//		JsonResponse(w, StatusResponse{
+//			Status: true,
+//			Detail: name,
+//		}, 200)
 //	}
-//	JsonResponse(w, StatusResponse{
-//		Status: true,
-//		Detail: name,
-//	}, 200)
-//}
+func GetDataPeriod(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	date := time.Now()
+	res, err := usecase.GetPeriodNow(ctx, date)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	rows, err := usecase.GetDataPeriod(ctx, res.Id)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	JsonResponse(w, rows, 200)
+}

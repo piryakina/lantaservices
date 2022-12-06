@@ -15,19 +15,19 @@ import (
 //}
 
 // UploadFile upload file
-func UploadFile(f multipart.File, h *multipart.FileHeader, fu *entities.File, usr *entities.User) *string { //(s *ServiceFile)
-	localPath, err := storage.SaveFile(f, h, fu, usr)
+func UploadFile(f multipart.File, h *multipart.FileHeader, fu *entities.File, id int64, status string, idPeriod int64) (*string, error) { //(s *ServiceFile)
+	localPath, err := storage.SaveFile(f, h, fu, id, status, idPeriod)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return localPath
+	return localPath, err
 }
 
 // UploadFile upload file
-func UploadInvoice(f multipart.File, h *multipart.FileHeader, fu *entities.File, usr *entities.User) *string { //(s *ServiceFile)
-	localPath, err := storage.SaveFile(f, h, fu, usr)
+func UploadInvoice(f multipart.File, h *multipart.FileHeader, fu *entities.File, id int64, status string, idPeriod int64) (*string, error) { //(s *ServiceFile)
+	localPath, err := storage.SaveFile(f, h, fu, id, status, idPeriod)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return localPath
+	return localPath, err
 }

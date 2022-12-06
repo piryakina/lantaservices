@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type FileDB struct {
@@ -22,7 +23,7 @@ type FileDB struct {
 func GetFileByOwnerId(ctx context.Context, id int64) {
 
 }
-func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File, usr *entities.User) (*string, error) {
+func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File, id int64, status string, idPeriod int64) (*string, error) {
 	fullPath := filepath.Join(fu.AbsPath, fu.Folder)
 	err := os.MkdirAll(fullPath, 0777)
 	if err != nil {
@@ -45,7 +46,7 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File,
 		return nil, err
 	}
 	if strings.Contains(fullPath, "billing") {
-		err = SaveBilling(fileName, fileNameRelative, usr)
+		err = SaveBilling(fileName, fileNameRelative, id, status, idPeriod)
 		if err != nil {
 			return nil, err
 		}
@@ -56,7 +57,7 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File,
 		//	}
 	}
 	if strings.Contains(fullPath, "invoice") {
-		err = SaveInvoice(fileName, fileNameRelative, usr)
+		err = SaveInvoice(fileName, fileNameRelative, id, idPeriod)
 		if err != nil {
 			return nil, err
 		}
@@ -64,25 +65,51 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File,
 
 	return &fileNameRelative, nil
 }
-func SaveBilling(filename string, path string, usr *entities.User) error {
+func SaveBilling(filename string, path string, id int64, status string, idPeriod int64) error {
 	db, err := GetDB()
 	if err != nil {
 		return err
 	}
-	query := "INSERT INTO file (filename, path, owner,status,sp_period_id, date) VALUES ($1, $2,$3,$4,$5)"
-	row := db.QueryRow(query, filename, path, usr.ID)
-	if row.Err() != nil {
+	query := "select id from sp_period where sp=$1 and period=$2"
+	row := db.QueryRow(query, id, idPeriod)
+	var spPeriodId int64
+	if err = row.Scan(&spPeriodId); err != nil {
+		return err
+	}
+	var StatusId int64
+	if status != "" {
+		query = "select id from docs_status where status_name=$1"
+		row = db.QueryRow(query, status)
+
+		if err = row.Scan(&StatusId); err != nil {
+			return err
+		}
+	} else {
+		StatusId = 1
+	}
+	date := time.Now()
+	query = "INSERT INTO billing_file (filename, path,status,date, sp_period_id ) VALUES ($1, $2,$3,$4,$5)"
+	row = db.QueryRow(query, filename, path, StatusId, date, spPeriodId)
+	if err = row.Err(); err != nil {
 		return row.Err()
 	}
+	defer db.Close()
 	return nil
 }
-func SaveInvoice(filename string, path string, usr *entities.User) error {
+func SaveInvoice(filename string, path string, id int64, idPeriod int64) error {
 	db, err := GetDB()
 	if err != nil {
 		return err
 	}
-	query := "INSERT INTO invoice_file (filename, path,sp_period_id,date) VALUES ($1, $2, $3,$4)"
-	row := db.QueryRow(query, filename, path)
+	query := "select id from sp_period where sp=$1 and period=$2"
+	row := db.QueryRow(query, id, idPeriod)
+	var spPeriodId int64
+	if err = row.Scan(&spPeriodId); err != nil {
+		return err
+	}
+	date := time.Now()
+	query = "INSERT INTO invoice_file (filename, path,sp_period_id,date) VALUES ($1, $2, $3,$4)"
+	row = db.QueryRow(query, filename, path, idPeriod, date)
 	if row.Err() != nil {
 		return row.Err()
 	}

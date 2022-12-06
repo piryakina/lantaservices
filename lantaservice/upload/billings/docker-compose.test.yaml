@@ -1,0 +1,61 @@
+version: '3'
+services:
+
+  db:
+    image: postgres:11.2
+    container_name: it_db
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: registration
+      POSTGRES_DB: registration
+    volumes:
+      - ./nn_invest/sql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    networks:
+      - net
+
+  integration_tests:
+    build: ./integration_tests
+    environment:
+      GRPC_PORT: 50051
+      GRPC_HOST: grpc.ru
+      HTTP_PORT: 8080
+      HTTP_HOST: 0.0.0.0
+      #network_mode: host
+    depends_on:
+      - db
+    command: "true"
+    networks:
+      - net
+
+  rest.ru:
+    container_name: it_web
+    build:
+      context: ./nn_invest
+      dockerfile: Dockerfile.multistage
+    environment:
+      HTTP_PORT: 8080
+      HTTP_HOST: 0.0.0.0
+      APP_BUILD: dev
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: registration
+      POSTGRES_DB: registration
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: db
+      #POSTGRES_HOST: 212.109.223.229
+    command:  sh -c './wait-for.sh db:5432 -- ./main web'
+    #network_mode: host
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - net
+
+volumes:
+  tmp:
+
+networks:
+  net:
+    driver: bridge
+
+

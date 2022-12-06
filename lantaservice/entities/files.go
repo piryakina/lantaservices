@@ -19,14 +19,15 @@ type Doc struct {
 	Owner    string    `json:"owner,omitempty"` //владельцем может быть только sp, login sp =owner
 	Status   DocStatus `json:"status,omitempty"`
 }
-type Invoice struct {
-	Id       int64     `json:"id,omitempty"`
-	Filename string    `json:"filename,omitempty"`
-	Path     string    `json:"path,omitempty"`
-	Date     time.Time `json:"date,omitempty"`
-	Sp       string    `json:"sp,omitempty"`
-	Period   string    `json:"period,omitempty"`
-}
+
+//type Invoice struct {
+//	Id       int64     `json:"id,omitempty"`
+//	Filename string    `json:"filename,omitempty"`
+//	Path     string    `json:"path,omitempty"`
+//	Date     time.Time `json:"date,omitempty"`
+//	Sp       string    `json:"sp,omitempty"`
+//	Period   string    `json:"period,omitempty"`
+//}
 
 //type FileRepository interface {
 //	GetFileByOwnerId(ctx context.Context, id int64)

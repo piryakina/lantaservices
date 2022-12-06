@@ -36,6 +36,13 @@ func AddDataSpPeriod(ctx context.Context, date *entities.SpPeriod) error {
 	}
 	return nil
 }
+func GetDataPeriod(ctx context.Context, idPeriod int64) ([]*entities.SpPeriod, error) {
+	res, err := storage.GetDataPeriodStorage(ctx, idPeriod)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
 
 //func GetSpNameById(ctx context.Context, id int64) (string, error) {
 //	name, err := storage.GetSpNameByID(ctx, id)
