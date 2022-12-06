@@ -151,3 +151,12 @@ func UploadInvoice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+func SetStatusFile(w http.ResponseWriter, r *http.Request) {
+	//ctx := r.Context()
+	//query := r.URL.Query()
+	//st := query.Get("status")
+}
+func GetStatuses(w http.ResponseWriter, r *http.Request) {
+	//ctx := r.Context()
+
+}
