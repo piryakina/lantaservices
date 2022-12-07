@@ -47,7 +47,7 @@ func Routing() []Route {
 		//{"edit-news", "POST", "/admin/edit-news", nil},
 		{"get-news", "GET", "/news", GetNews},
 		//status file
-		{"set-status-file", "GET", "/status", SetStatusFile},
+
 		{"get-status-file", "GET", "/status", GetStatuses},
 
 		//services partner
@@ -59,6 +59,8 @@ func Routing() []Route {
 		//add score by sp
 		{"upload-file", "POST", "/invoice/upload", UploadInvoice},
 		//add response by analytic or usp
-		{"upload-file", "POST", "/response/upload", nil},
+		{"upload-file", "POST", "/attachment/upload", UploadAttachments},
+		//set comments
+		{"set-comment-file", "POST", "/set-comment", SetCommentFile},
 	}
 }

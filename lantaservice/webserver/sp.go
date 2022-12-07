@@ -86,3 +86,21 @@ func GetDataPeriod(w http.ResponseWriter, r *http.Request) {
 	}
 	JsonResponse(w, rows, 200)
 }
+func SetCommentFile(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	c := &entities.CommentFile{}
+	err := json.NewDecoder(r.Body).Decode(c)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	err = usecase.SetComments(ctx, c.Comment, c.ID)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	JsonResponse(w, StatusResponse{
+		Status: true,
+		Detail: "comment is set",
+	}, 200)
+}

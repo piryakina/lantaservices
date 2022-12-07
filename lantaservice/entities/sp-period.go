@@ -26,3 +26,7 @@ type BillingFile struct {
 	Date     time.Time `json:"date,omitempty"`
 	Status   string    `json:"status,omitempty"`
 }
+type CommentFile struct {
+	ID      int64  `json:"id,omitempty"`
+	Comment string `json:"comments,omitempty"`
+}

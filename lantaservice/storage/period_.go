@@ -38,6 +38,7 @@ func FromPeriodDB(p PeriodDB) *entities.Period {
 }
 func GetPeriodNowStorage(ctx context.Context, date time.Time) (*entities.Period, error) {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -49,11 +50,12 @@ func GetPeriodNowStorage(ctx context.Context, date time.Time) (*entities.Period,
 		return nil, err
 	}
 	period = FromPeriodDB(temp)
-	defer db.Close()
+
 	return period, nil
 }
 func GetAllPeriodStorage(ctx context.Context) ([]*entities.Period, error) {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -68,11 +70,11 @@ func GetAllPeriodStorage(ctx context.Context) ([]*entities.Period, error) {
 		prds = append(prds, FromPeriodDB(c))
 	}
 	defer rows.Close()
-	defer db.Close()
 	return prds, nil
 }
 func AddNewPeriodStorage(ctx context.Context, p *entities.Period) error {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return err
 	}
@@ -82,6 +84,6 @@ func AddNewPeriodStorage(ctx context.Context, p *entities.Period) error {
 	if err = row.Scan(&id); err != nil {
 		return err
 	}
-	defer db.Close()
+
 	return nil
 }

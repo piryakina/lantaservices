@@ -1,0 +1,6 @@
+.idea/
+nn_invest/assets/node_modules
+nn_invest/assets/package-lock.json
+nn_invest/assets/build/
+.DS_Store
+*.LICENSE

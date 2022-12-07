@@ -53,10 +53,10 @@ func GetNewsStorage(ctx context.Context) ([]*entities.News, error) {
 	return news, nil
 }
 
-func AddNewsStorage(ctx context.Context, p *entities.News) error {
+func AddNewsStorage(ctx context.Context, p *entities.News) (int64, error) {
 	db, err := GetDB()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	query := "INSERT INTO news (title,text,\"date\") VALUES  ($1,$2,$3) returning id"
 	title := ToNullString(p.Title)
@@ -65,7 +65,7 @@ func AddNewsStorage(ctx context.Context, p *entities.News) error {
 	row := db.QueryRowContext(ctx, query, title, text, date)
 	var id int64
 	if err = row.Scan(&id); err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }

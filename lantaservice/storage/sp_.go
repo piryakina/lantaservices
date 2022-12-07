@@ -269,14 +269,14 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 		if err = rows.Scan(&temp.ID, &temp.Sp, &temp.Period); err != nil {
 			return nil, err
 		}
-		query = "SELECT filename, path, status from billing_file where sp_period_id=$1"
+		query = "SELECT filename, path, status,date from billing_file where sp_period_id=$1"
 		rows2, err = db.QueryContext(ctx, query, temp.ID)
 		if err != nil {
 			return nil, err
 		}
 		for rows2.Next() {
 			var t entities.BillingFile
-			if err = rows2.Scan(&t.Filename, &t.Path, &t.Status); err != nil {
+			if err = rows2.Scan(&t.Filename, &t.Path, &t.Status, &t.Date); err != nil {
 				return nil, err
 			}
 			temp.Billing = append(temp.Billing, t)

@@ -15,15 +15,16 @@ import (
 //	NewsRepository entities.NewsRepository
 //}
 
-func AddNews(ctx context.Context, n *entities.News) error { //(s *ServiceNews)
-	err := storage.AddNewsStorage(ctx, n)
+func AddNews(ctx context.Context, n *entities.News) (int64, error) { //(s *ServiceNews)
+	id, err := storage.AddNewsStorage(ctx, n)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 func GetNews(ctx context.Context) ([]*entities.News, error) {
+
 	news, err := storage.GetNewsStorage(ctx)
 	if err != nil {
 		return nil, err

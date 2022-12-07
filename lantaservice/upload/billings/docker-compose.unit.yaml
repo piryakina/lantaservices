@@ -1,0 +1,43 @@
+version: '3'
+services:
+
+  test.db:
+    image: postgres:11.2
+    container_name: unit_db
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: postgres
+      POSTGRES_DB: invest
+    volumes:
+      - ../nn_invest/sql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    networks:
+      - test_net
+  unit:
+    image: invest:1.1
+    container_name: uniy
+    environment:
+      HTTP_PORT: 8080
+      HTTP_HOST: 0.0.0.0
+      APP_BUILD: dev
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: postgres
+      POSTGRES_DB: invest
+      POSTGRES_DB_EN: en_invest
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: test.db
+
+    command:  ./wait-for-it.sh test.db:5432 -- "true"
+    volumes:
+      - ../nn_invest/:/code
+    depends_on:
+      - test.db
+    networks:
+      - test_net
+volumes:
+  tmp:
+
+networks:
+  test_net:
+    driver: bridge
+
+

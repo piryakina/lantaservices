@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -20,11 +21,12 @@ type Storage struct {
 	Db *sqlx.DB
 }
 
-func GetDB() (*sqlx.DB, error) {
+func GetDB() (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	db, err := sqlx.Connect("postgres", psqlInfo)
+	db, err := sql.Open("postgres", psqlInfo)
+	//db, err := sqlx.Connect("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}

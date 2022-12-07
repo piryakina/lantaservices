@@ -5,6 +5,7 @@ import (
 	"lantaservice/entities"
 	"lantaservice/usecase"
 	"net/http"
+	"time"
 )
 
 func AddNews(w http.ResponseWriter, r *http.Request) {
@@ -15,15 +16,14 @@ func AddNews(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
-	err = usecase.AddNews(ctx, c)
+	date := time.Now()
+	c.Date = date
+	id, err := usecase.AddNews(ctx, c)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
 	}
-	JsonResponse(w, StatusResponse{
-		Status: true,
-		Detail: "success",
-	}, 200)
+	JsonResponse(w, StatusId{Id: id}, 200)
 }
 
 func GetNews(w http.ResponseWriter, r *http.Request) {

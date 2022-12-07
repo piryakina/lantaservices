@@ -62,7 +62,12 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File,
 			return nil, err
 		}
 	}
-
+	if strings.Contains(fullPath, "attachment") {
+		err = SaveAttach(fileName, fileNameRelative, id)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return &fileNameRelative, nil
 }
 func SaveBilling(filename string, path string, id int64, status string, idPeriod int64) error {
@@ -116,15 +121,92 @@ func SaveInvoice(filename string, path string, id int64, idPeriod int64) error {
 	return nil
 }
 
-//func (s *Storage) SaveTestList(filename string, path string) error {
-//	db, err := s.GetDB()
-//	if err != nil {
-//		return err
+func SaveAttach(filename string, path string, id int64) error { //todo attach
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+	query := "select id from sp_period where sp=$1 and period=$2"
+	row := db.QueryRow(query, id)
+	var spPeriodId int64
+	if err = row.Scan(&spPeriodId); err != nil {
+		return err
+	}
+	date := time.Now()
+	query = "INSERT INTO invoice_file (filename, path,sp_period_id,date) VALUES ($1, $2, $3,$4)"
+	row = db.QueryRow(query, filename, path, date)
+	if row.Err() != nil {
+		return row.Err()
+	}
+	return nil
+}
+
+//	func (s *Storage) SaveTestList(filename string, path string) error {
+//		db, err := s.GetDB()
+//		if err != nil {
+//			return err
+//		}
+//		query := "INSERT INTO test_list (filename, path) VALUES ($1, $2)"
+//		row := db.QueryRow(query, filename, path)
+//		if row.Err() != nil {
+//			return row.Err()
+//		}
+//		return nil
 //	}
-//	query := "INSERT INTO test_list (filename, path) VALUES ($1, $2)"
-//	row := db.QueryRow(query, filename, path)
-//	if row.Err() != nil {
-//		return row.Err()
-//	}
-//	return nil
-//}
+
+func GetStatusesStorage(ctx context.Context) ([]*entities.DocStatus, error) {
+	db, err := GetDB()
+	if err != nil {
+		return nil, err
+	}
+	query := "SELECT id, status_name from docs_status"
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	var res []*entities.DocStatus
+	for rows.Next() {
+		var st entities.DocStatus
+		if err = rows.Scan(&st.Id, &st.StatusName); err != nil {
+			return nil, err
+		}
+		res = append(res, &st)
+	}
+	return res, nil
+}
+
+func SetStatusStorage(ctx context.Context, statusId int64, fileId int64) error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+	//query := "select id from user where login=$1"
+	//row := db.QueryRowContext(ctx, query, login)
+	//var IdSp, spPeriod int64
+	//if err = row.Scan(&IdSp); err != nil {
+	//	return err
+	//}
+	//query = "Select id from sp_period where sp=$1 and period=$2"
+	//row = db.QueryRowContext(ctx, query, IdSp, idPeriod)
+	//if err = row.Scan(&spPeriod); err != nil {
+	//	return err
+	//}
+	query := "update billing_file set status=$1 where id=$2"
+	row := db.QueryRowContext(ctx, query, statusId, fileId)
+	if err = row.Err(); err != nil {
+		return err
+	}
+	return nil
+}
+func SetCommentFile(ctx context.Context, text string, id int64) error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+	query := "update billing_file set comment=$1 where id=$2"
+	row := db.QueryRowContext(ctx, query, text, id)
+	if err = row.Err(); err != nil {
+		return err
+	}
+	return nil
+}
