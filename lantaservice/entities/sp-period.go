@@ -25,6 +25,7 @@ type BillingFile struct {
 	Path     string    `json:"path,omitempty"`
 	Date     time.Time `json:"date,omitempty"`
 	Status   string    `json:"status,omitempty"`
+	Comments string    `json:"comments,omitempty"`
 }
 type CommentFile struct {
 	ID      int64  `json:"id,omitempty"`

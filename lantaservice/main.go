@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+
 	Router := webserver.NewRouter()
 	Router.Use(webserver.SessionMiddleware)
 	c := cors.New(cors.Options{

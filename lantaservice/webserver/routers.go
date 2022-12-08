@@ -49,6 +49,7 @@ func Routing() []Route {
 		//status file
 
 		{"get-status-file", "GET", "/status", GetStatuses},
+		{"set-status-file", "GET", "/set-status", SetStatusFile},
 
 		//services partner
 		{"get-quality-and-process", "GET", "/sp-period", GetDataSpPeriodNow},
@@ -56,6 +57,7 @@ func Routing() []Route {
 		{"add-quality-and-process", "POST", "/add/sp-period", AddDataSpPeriodNow},
 		//add billing by sp
 		{"upload-file", "POST", "/billings/upload", UploadBilling},
+		{"download-file", "GET", "/billings/download", nil},
 		//add score by sp
 		{"upload-file", "POST", "/invoice/upload", UploadInvoice},
 		//add response by analytic or usp

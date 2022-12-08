@@ -3,7 +3,9 @@ package storage
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"lantaservice/entities"
+	"log"
 	"time"
 )
 
@@ -23,6 +25,14 @@ type SpPeriodDB struct {
 	Quality  sql.NullString `db:"quality"`
 	Invoice  sql.NullString `db:"invoice"`
 	Vehicles int64          `db:"vehicle_service"`
+}
+type BillingFileDB struct {
+	ID       int64          `db:"id"`
+	Filename sql.NullString `db:"filename"`
+	Path     sql.NullString `db:"path"`
+	Date     string         `db:"date"`
+	Status   sql.NullString `db:"status"`
+	Comments sql.NullString `db:"comments"`
 }
 
 func FromSPDB(p *SPDB) *entities.SP {
@@ -54,6 +64,39 @@ func FromSPDB(p *SPDB) *entities.SP {
 		Email:       mail,
 		Phone:       phone,
 		NameCompany: n,
+	}
+}
+func fromFileDB(p *BillingFileDB) *entities.BillingFile {
+	var filename string
+	if p.Filename.Valid {
+		filename = p.Filename.String
+	}
+	var comment string
+	if p.Comments.Valid {
+		comment = p.Comments.String
+	}
+	var st string
+	if p.Status.Valid {
+		st = p.Status.String
+	}
+	var path string
+	if p.Path.Valid {
+		path = p.Path.String
+	}
+	layout := "2006-01-02T15:04:05Z" //todo yyyy-mm-dd
+	var date time.Time
+	date, err := time.Parse(layout, p.Date)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(date.Format(layout))
+	return &entities.BillingFile{
+		ID:       p.ID,
+		Filename: filename,
+		Path:     path,
+		Date:     date,
+		Status:   st,
+		Comments: comment,
 	}
 }
 
@@ -162,14 +205,18 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	if err = row.Scan(&temp.ID, &temp.Vehicles, &temp.Quality); err != nil {
 		return nil, err
 	} //res = append(res)
-	query = "select b.filename,b.path,b.date, (select status_name from docs_status where id=b.status) as status from billing_file as b where b.sp_period_id=$1"
+	query = "select b.id, b.filename,b.path,b.date, (select d.status_name from docs_status as d where d.id=b.status) as status from billing_file as b where b.sp_period_id=$1"
 	rows, err := db.QueryContext(ctx, query, temp.ID)
+	if err != nil {
+		return nil, err
+	}
 	var billings []entities.BillingFile
 	for rows.Next() {
 		var file entities.BillingFile
-		if err = rows.Scan(&file.Filename, &file.Path, &file.Date, &file.Status); err != nil {
+		if err = rows.Scan(&file.ID, &file.Filename, &file.Path, &file.Date, &file.Status); err != nil {
 			return nil, err
 		}
+		fmt.Println(file.ID)
 		billings = append(billings, file)
 	}
 	defer rows.Close()
@@ -269,17 +316,17 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 		if err = rows.Scan(&temp.ID, &temp.Sp, &temp.Period); err != nil {
 			return nil, err
 		}
-		query = "SELECT filename, path, status,date from billing_file where sp_period_id=$1"
+		query = "SELECT id,filename, path, status,date, comments from billing_file where sp_period_id=$1"
 		rows2, err = db.QueryContext(ctx, query, temp.ID)
 		if err != nil {
 			return nil, err
 		}
 		for rows2.Next() {
-			var t entities.BillingFile
-			if err = rows2.Scan(&t.Filename, &t.Path, &t.Status, &t.Date); err != nil {
+			var t BillingFileDB
+			if err = rows2.Scan(&t.ID, &t.Filename, &t.Path, &t.Status, &t.Date, &t.Comments); err != nil {
 				return nil, err
 			}
-			temp.Billing = append(temp.Billing, t)
+			temp.Billing = append(temp.Billing, *fromFileDB(&t))
 		}
 		res = append(res, &temp)
 

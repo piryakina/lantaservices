@@ -12,14 +12,6 @@ import (
 	"time"
 )
 
-type FileDB struct {
-	Id       int64  `db:"id"`
-	Filename string `db:"filename"`
-	Path     string `db:"path"`
-	Date     string `db:"date"`
-	Owner    int64  `db:"owner"`
-}
-
 func GetFileByOwnerId(ctx context.Context, id int64) {
 
 }
@@ -203,7 +195,7 @@ func SetCommentFile(ctx context.Context, text string, id int64) error {
 	if err != nil {
 		return err
 	}
-	query := "update billing_file set comment=$1 where id=$2"
+	query := "update billing_file set comments=$1 where id=$2"
 	row := db.QueryRowContext(ctx, query, text, id)
 	if err = row.Err(); err != nil {
 		return err

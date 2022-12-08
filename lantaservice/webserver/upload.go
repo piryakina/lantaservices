@@ -186,6 +186,28 @@ func GetStatuses(w http.ResponseWriter, r *http.Request) {
 	JsonResponse(w, res, 200)
 }
 
+//func SetS(w http.ResponseWriter, r *http.Request) {
+//	ctx := r.Context()
+//	query := r.URL.Query()
+//	str := query.Get("id")
+//	str2 := query.Get("status")
+//	id, err := strconv.ParseInt(str, 10, 64)
+//	if err != nil {
+//		ErrorResponse(w, err)
+//		return
+//	}
+//
+//	err := usecase.SetStatus(ctx, id, str2)
+//	if err != nil {
+//		ErrorResponse(w, err)
+//		return
+//	}
+//	JsonResponse(w, StatusResponse{
+//		Status: true,
+//		Detail: "status is set",
+//	}, 200)
+//}
+
 // UploadInvoice UploadFile upload file
 func UploadAttachments(w http.ResponseWriter, r *http.Request) {
 	//ctx := r.Context()

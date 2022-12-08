@@ -3,7 +3,6 @@ package storage
 import (
 	"database/sql"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
@@ -18,7 +17,7 @@ const (
 )
 
 type Storage struct {
-	Db *sqlx.DB
+	Db *sql.DB
 }
 
 func GetDB() (*sql.DB, error) {
