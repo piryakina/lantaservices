@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"lantaservice/entities"
 	"log"
@@ -201,4 +202,21 @@ func SetCommentFile(ctx context.Context, text string, id int64) error {
 		return err
 	}
 	return nil
+}
+
+func GetFileInfoById(ctx context.Context, id int64) (*entities.BillingFile, error) {
+	db, err := GetDB()
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(id)
+	query := "select id, filename, path, status, date, comments from billing_file where id = $1"
+	row := db.QueryRowContext(ctx, query, id)
+	if err = row.Err(); err != nil {
+		return nil, err
+	}
+	var doc entities.BillingFile
+	row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.Status, &doc.Date, &doc.Comments)
+	//fmt.Println(doc.ID)
+	return &doc, nil
 }

@@ -55,3 +55,11 @@ func SetComments(ctx context.Context, text string, id int64) error {
 	err := storage.SetCommentFile(ctx, text, id)
 	return err
 }
+
+func GetFilePath(ctx context.Context, fileId int64) (string, error) {
+	doc, err := storage.GetFileInfoById(ctx, fileId)
+	if err != nil {
+		return "", err
+	}
+	return doc.Path, nil
+}

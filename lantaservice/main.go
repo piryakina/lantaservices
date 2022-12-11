@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/rs/cors"
 	"lantaservice/webserver"
 	"log"
 	"net/http"
+
+	"github.com/rs/cors"
 )
 
 func main() {

@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -54,6 +55,7 @@ func JsonResponse(w http.ResponseWriter, js interface{}, status int) {
 
 // ErrorResponse error handler
 func ErrorResponse(w http.ResponseWriter, err error) {
+	fmt.Println(err.Error())
 	JsonResponse(w, StatusResponse{
 		Status: false,
 		Detail: err.Error(),

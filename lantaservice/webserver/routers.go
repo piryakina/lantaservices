@@ -1,8 +1,9 @@
 package webserver
 
 import (
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type Route struct {
@@ -57,7 +58,7 @@ func Routing() []Route {
 		{"add-quality-and-process", "POST", "/add/sp-period", AddDataSpPeriodNow},
 		//add billing by sp
 		{"upload-file", "POST", "/billings/upload", UploadBilling},
-		{"download-file", "GET", "/billings/download", nil},
+		{"download-file", "GET", "/billings/download", DownloadBilling},
 		//add score by sp
 		{"upload-file", "POST", "/invoice/upload", UploadInvoice},
 		//add response by analytic or usp
