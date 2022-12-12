@@ -180,6 +180,7 @@ func GetSPById(ctx context.Context, id int64) (*entities.SP, error) {
 
 func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (*entities.SpPeriod, error) {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -240,6 +241,7 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 
 func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return err
 	}
@@ -301,6 +303,7 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 	//--SELECT sp.id,(select t2.name from "user" as t2 where id=sp.sp) as name, (select t3.title from period as t3 where id=sp.period) as period from sp_period as sp
 	//	SELECT filename, path, status from billing_file where sp_period_id=2
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return nil, err
 	}
