@@ -37,16 +37,13 @@ func FromPeriodDB(p PeriodDB) *entities.Period {
 	}
 }
 func GetPeriodNowStorage(ctx context.Context, date time.Time) (*entities.Period, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
+
 	query := "SELECT * FROM period WHERE $1 between date_from and date_to"
 	row := db.QueryRowContext(ctx, query, date)
 	var period *entities.Period
 	var temp PeriodDB
-	if err = row.Scan(&temp.Id, &temp.DateFrom, &temp.DateTo, &temp.Title); err != nil {
+	if err := row.Scan(&temp.Id, &temp.DateFrom, &temp.DateTo, &temp.Title); err != nil {
 		return nil, err
 	}
 	period = FromPeriodDB(temp)
@@ -54,11 +51,7 @@ func GetPeriodNowStorage(ctx context.Context, date time.Time) (*entities.Period,
 	return period, nil
 }
 func GetAllPeriodStorage(ctx context.Context) ([]*entities.Period, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
 	query := "SELECT * from period"
 	rows, err := db.QueryContext(ctx, query)
 	var prds []*entities.Period
@@ -73,15 +66,11 @@ func GetAllPeriodStorage(ctx context.Context) ([]*entities.Period, error) {
 	return prds, nil
 }
 func AddNewPeriodStorage(ctx context.Context, p *entities.Period) error {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return err
-	}
+	db := GetDB()
 	query := "INSERT INTO period (date_from,date_to,title) VALUES ($1,$2,$3) returning id"
 	row := db.QueryRowContext(ctx, query, p.DateFrom, p.DateTo, p.Title)
 	var id int64
-	if err = row.Scan(&id); err != nil {
+	if err := row.Scan(&id); err != nil {
 		return err
 	}
 

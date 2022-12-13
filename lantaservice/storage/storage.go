@@ -1,11 +1,13 @@
 package storage
 
 import (
-	"database/sql"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 
 	_ "github.com/lib/pq"
 )
+
+var DBRU = NewStorage()
 
 const (
 	host = "localhost"
@@ -19,14 +21,22 @@ const (
 )
 
 type Storage struct {
-	Db *sql.DB
+	Db *sqlx.DB
 }
 
-func GetDB() (*sql.DB, error) {
+// NewStorage constructor for storage
+func NewStorage() *sqlx.DB {
+	dbRu, err := InitDB()
+	if err != nil {
+		return nil
+	}
+	return dbRu
+}
+func InitDB() (*sqlx.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sqlx.Connect("postgres", psqlInfo)
 	//db, err := sqlx.Connect("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
@@ -36,5 +46,7 @@ func GetDB() (*sql.DB, error) {
 		panic(err)
 	}
 	return db, nil
-
+}
+func GetDB() *sqlx.DB {
+	return DBRU
 }

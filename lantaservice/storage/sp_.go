@@ -132,14 +132,11 @@ func FromSPPeriodDB(p *SpPeriodDB) *entities.SpPeriod {
 
 // AddSP - add sp to db
 func AddSP(ctx context.Context, sp *entities.SP) (int64, error) {
-	db, err := GetDB()
-	if err != nil {
-		return 0, err
-	}
+	db := GetDB()
 	query := "INSERT INTO sp (name_company, email, phone, login, password) VALUES ($1,$2,$3,$4,$5) returning id"
 	var id int64
 	row := db.QueryRowContext(ctx, query, sp.NameCompany, sp.Email, sp.Phone, sp.Login, sp.Password)
-	if err = row.Scan(&id); err != nil {
+	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
 	return id, nil
@@ -147,14 +144,11 @@ func AddSP(ctx context.Context, sp *entities.SP) (int64, error) {
 
 // GetSPById - get sp by id
 func GetSPById(ctx context.Context, id int64) (*entities.SP, error) {
-	db, err := GetDB()
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
 	query := "SELECT * from sp WHERE id=$1"
 	row := db.QueryRowContext(ctx, query, id)
 	var sp SPDB
-	if err = row.Scan(&sp.ID, &sp.NameCompany, &sp.Email, &sp.Phone, &sp.Login, &sp.Password); err != nil {
+	if err := row.Scan(&sp.ID, &sp.NameCompany, &sp.Email, &sp.Phone, &sp.Login, &sp.Password); err != nil {
 		return nil, err
 	}
 	var partner *entities.SP
@@ -179,31 +173,24 @@ func GetSPById(ctx context.Context, id int64) (*entities.SP, error) {
 //}
 
 func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (*entities.SpPeriod, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
 	var idSp, idPeriod int64
 	var temp SpPeriodDB
 	query := "SELECT id,name from \"user\" WHERE login=$1"
 	row := db.QueryRowContext(ctx, query, login)
-	if err = row.Scan(&idSp, &temp.SP); err != nil {
+	if err := row.Scan(&idSp, &temp.SP); err != nil {
 		return nil, err
 	}
 	query = "SELECT id,title FROM period WHERE $1 between date_from and date_to"
 	row = db.QueryRowContext(ctx, query, date)
-	if err = row.Scan(&idPeriod, &temp.Period); err != nil {
+	if err := row.Scan(&idPeriod, &temp.Period); err != nil {
 		return nil, err
 	}
 
 	query = "SELECT t1.id,t1.vehicle_service,t1.quality from sp_period as t1 where t1.sp=$1 and t1.period=$2"
 	row = db.QueryRowContext(ctx, query, idSp, idPeriod)
-	if err != nil {
-		return nil, err
-	}
 	var res *entities.SpPeriod
-	if err = row.Scan(&temp.ID, &temp.Vehicles, &temp.Quality); err != nil {
+	if err := row.Scan(&temp.ID, &temp.Vehicles, &temp.Quality); err != nil {
 		return nil, err
 	} //res = append(res)
 	query = "select b.id, b.filename,b.path,b.date, (select d.status_name from docs_status as d where d.id=b.status) as status from billing_file as b where b.sp_period_id=$1"
@@ -240,25 +227,22 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 }
 
 func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return err
-	}
+	db := GetDB()
+
 	query := "SELECT id from \"user\" WHERE login=$1"
 	row := db.QueryRowContext(ctx, query, data.Sp)
 	var idSP, idPeriod, idSpPeriod int64
-	if err = row.Scan(&idSP); err != nil {
+	if err := row.Scan(&idSP); err != nil {
 		return err
 	}
 	query = "SELECT id FROM period WHERE title=$1 "
 	row = db.QueryRowContext(ctx, query, data.Period)
-	if err = row.Scan(&idPeriod); err != nil {
+	if err := row.Scan(&idPeriod); err != nil {
 		return err
 	}
 	query = "insert into sp_period (sp,period,vehicle_service,quality) VALUES ($1,$2,$3,$4) returning id"
 	row = db.QueryRowContext(ctx, query, idSP, idPeriod, data.Vehicle, data.Quality)
-	if err = row.Scan(&idSpPeriod); err != nil {
+	if err := row.Scan(&idSpPeriod); err != nil {
 		return err
 	}
 	if len(data.Billing) != 0 {
@@ -266,7 +250,7 @@ func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error 
 			if data.Billing[i].Filename != "" {
 				query = "insert into billing_file (filename,path,date,status, sp_period_id) values ($1,$2,$3,$4,$5)"
 				row = db.QueryRowContext(ctx, query, data.Billing[i].Filename, data.Billing[i].Path, time.Now(), 1, idSpPeriod)
-				if err = row.Err(); err != nil {
+				if err := row.Err(); err != nil {
 					return err
 				}
 			}
@@ -277,7 +261,7 @@ func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error 
 			if data.Billing[i].Filename != "" {
 				query = "insert into invoice_file (filename,path,date, sp_period_id) values ($1,$2,$3,$4)"
 				row = db.QueryRowContext(ctx, query, data.Billing[i].Filename, data.Billing[i].Path, time.Now(), idSpPeriod)
-				if err = row.Err(); err != nil {
+				if err := row.Err(); err != nil {
 					return err
 				}
 			}
@@ -302,11 +286,7 @@ func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error 
 func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPeriod, error) { //todo get rows sp_period
 	//--SELECT sp.id,(select t2.name from "user" as t2 where id=sp.sp) as name, (select t3.title from period as t3 where id=sp.period) as period from sp_period as sp
 	//	SELECT filename, path, status from billing_file where sp_period_id=2
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
 	var res []*entities.SpPeriod
 	query := "SELECT sp.id,(select t2.name from \"user\" as t2 where id=sp.sp) as sp, (select t3.title from period as t3 where id=sp.period) as period from sp_period as sp where period=$1"
 	rows, err := db.QueryContext(ctx, query, idPeriod)

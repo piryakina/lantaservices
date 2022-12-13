@@ -62,16 +62,12 @@ func FromUserDB(p *UserDB) *entities.User {
 // AddUser  - add user to db
 func AddUser(ctx context.Context, usr *entities.User) (int64, error) {
 	//(s * Storage)
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return 0, err
-	}
+	db := GetDB()
 	var idRole int64
 	query := "SELECT id from \"role\" WHERE role=$1"
 	if usr.Role != "" {
 		row := db.QueryRowContext(ctx, query, usr.Role)
-		if err = row.Scan(&idRole); err != nil {
+		if err := row.Scan(&idRole); err != nil {
 			return 0, err
 		}
 	} else {
@@ -80,7 +76,7 @@ func AddUser(ctx context.Context, usr *entities.User) (int64, error) {
 	query = "INSERT INTO \"user\" (name, login, email, phone, password, \"role\") VALUES ($1,$2,$3,$4,$5,$6) returning id"
 	var id int64
 	row := db.QueryRowContext(ctx, query, usr.Name, usr.Login, usr.Email, usr.Phone, usr.Password, idRole)
-	if err = row.Scan(&id); err != nil {
+	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
 	return id, nil
@@ -88,21 +84,17 @@ func AddUser(ctx context.Context, usr *entities.User) (int64, error) {
 
 // GetUserById - get user by id
 func GetUserById(ctx context.Context, id int64) (*entities.User, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
 	query := "SELECT * from \"user\" WHERE id=$1"
 	row := db.QueryRowContext(ctx, query, id)
 	var usr UserDB
 	var idRole int64
-	if err = row.Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Phone, &usr.Password, &idRole); err != nil {
+	if err := row.Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Phone, &usr.Password, &idRole); err != nil {
 		return nil, err
 	}
 	query = "SELECT role from role where id=$1"
 	row = db.QueryRowContext(ctx, query, id)
-	if err = row.Scan(&usr.Role); err != nil {
+	if err := row.Scan(&usr.Role); err != nil {
 		return nil, err
 	}
 	var user *entities.User
@@ -111,22 +103,18 @@ func GetUserById(ctx context.Context, id int64) (*entities.User, error) {
 }
 
 func LoginUserStorage(ctx context.Context, usr string) (int64, string, string, string, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return 0, "", "", "", err
-	}
+	db := GetDB()
 	query := "SELECT id,password,role,name from \"user\" WHERE login=$1"
 	var pwd, role, name string
 	var id, roleId int64
 	row := db.QueryRowContext(ctx, query, usr)
 
-	if err = row.Scan(&id, &pwd, &roleId, &name); err != nil {
+	if err := row.Scan(&id, &pwd, &roleId, &name); err != nil {
 		return 0, "", "", "", err
 	}
 	query = "SELECT role from role where id=$1"
 	row = db.QueryRowContext(ctx, query, roleId)
-	if err = row.Scan(&role); err != nil {
+	if err := row.Scan(&role); err != nil {
 		return 0, "", "", "", err
 	}
 	return id, pwd, role, name, nil
@@ -153,22 +141,18 @@ func LoginUserStorage(ctx context.Context, usr string) (int64, string, string, s
 //
 // GetUserById - get user by id
 func GetUserRoleById(ctx context.Context, id int64) (string, string, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return "", "", err
-	}
+	db := GetDB()
 	if id != 0 {
 		query := "SELECT role,name from \"user\" WHERE id=$1"
 		row := db.QueryRowContext(ctx, query, id)
 		var idRole int64
 		var role, name string
-		if err = row.Scan(&idRole, &name); err != nil {
+		if err := row.Scan(&idRole, &name); err != nil {
 			return "", "", err
 		}
 		query = "SELECT role from role where id=$1"
 		row = db.QueryRowContext(ctx, query, idRole)
-		if err = row.Scan(&role); err != nil {
+		if err := row.Scan(&role); err != nil {
 			return "", "", err
 		}
 		return role, name, nil
@@ -177,11 +161,7 @@ func GetUserRoleById(ctx context.Context, id int64) (string, string, error) {
 	return "", "", nil
 }
 func GetRoles(ctx context.Context) ([]string, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
 	query := "SELECT role from role"
 	rows, err := db.QueryContext(ctx, query)
 	if err != nil {

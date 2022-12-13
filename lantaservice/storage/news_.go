@@ -62,13 +62,8 @@ func FromAttachDB(p AttachDB) *entities.Attach {
 }
 
 func GetNewsStorage(ctx context.Context) ([]*entities.News, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return nil, err
-	}
-	//query:="select t.id,t.title,t.text,t.date, (select path from attachment where id=t.id) as path, (select filename from attachment where id=t.id) as filename from news as t"
-	query := "SELECT id, title, text, \"date\" from news"
+	db := GetDB()
+	query := "SELECT title,text,\"date\" from news"
 	rows, err := db.QueryContext(ctx, query)
 	var news []*entities.News
 	for rows.Next() {
@@ -94,18 +89,14 @@ func GetNewsStorage(ctx context.Context) ([]*entities.News, error) {
 }
 
 func AddNewsStorage(ctx context.Context, p *entities.News) (int64, error) {
-	db, err := GetDB()
-	defer db.Close()
-	if err != nil {
-		return 0, err
-	}
+	db := GetDB()
 	query := "INSERT INTO news (title,text,\"date\") VALUES  ($1,$2,$3) returning id"
 	title := ToNullString(p.Title)
 	text := ToNullString(p.Text)
 	date := ToNullString(p.Date)
 	row := db.QueryRowContext(ctx, query, title, text, date)
 	var id int64
-	if err = row.Scan(&id); err != nil {
+	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
 	return id, nil
