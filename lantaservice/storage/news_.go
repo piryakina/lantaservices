@@ -63,7 +63,7 @@ func FromAttachDB(p AttachDB) *entities.Attach {
 
 func GetNewsStorage(ctx context.Context) ([]*entities.News, error) {
 	db := GetDB()
-	query := "SELECT title,text,\"date\" from news"
+	query := "SELECT id,title,text,\"date\" from news"
 	rows, err := db.QueryContext(ctx, query)
 	var news []*entities.News
 	for rows.Next() {
