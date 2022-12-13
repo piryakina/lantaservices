@@ -228,7 +228,7 @@ func UploadAttachments(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
-	strId := r.Form["newsId"]
+	strId := r.Form["id_news"]
 	var id int64
 	if len(strId) != 0 {
 		id, err = strconv.ParseInt(strId[0], 10, 64)

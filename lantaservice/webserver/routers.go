@@ -47,6 +47,7 @@ func Routing() []Route {
 		{"add-news", "POST", "/admin/add-news", AddNews},
 		//{"edit-news", "POST", "/admin/edit-news", nil},
 		{"get-news", "GET", "/news", GetNews},
+		{"get-attach", "GET", "/news-img", GetImg},
 		//status file
 
 		{"get-status-file", "GET", "/status", GetStatuses},

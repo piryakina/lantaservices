@@ -63,3 +63,16 @@ func GetFilePath(ctx context.Context, fileId int64) (string, error) {
 	}
 	return doc.Path, nil
 }
+
+func GetImgPath(ctx context.Context, fileId int64) (string, error) {
+	doc, err := storage.GetImgById(ctx, fileId)
+	if err != nil {
+		return "", err
+	}
+	if doc != nil {
+		return doc.Path, nil
+
+	} else {
+		return "assets/no-image.svg", nil
+	}
+}

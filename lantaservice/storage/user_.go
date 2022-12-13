@@ -63,6 +63,7 @@ func FromUserDB(p *UserDB) *entities.User {
 func AddUser(ctx context.Context, usr *entities.User) (int64, error) {
 	//(s * Storage)
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return 0, err
 	}
@@ -88,6 +89,7 @@ func AddUser(ctx context.Context, usr *entities.User) (int64, error) {
 // GetUserById - get user by id
 func GetUserById(ctx context.Context, id int64) (*entities.User, error) {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -110,6 +112,7 @@ func GetUserById(ctx context.Context, id int64) (*entities.User, error) {
 
 func LoginUserStorage(ctx context.Context, usr string) (int64, string, string, string, error) {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return 0, "", "", "", err
 	}
@@ -151,6 +154,7 @@ func LoginUserStorage(ctx context.Context, usr string) (int64, string, string, s
 // GetUserById - get user by id
 func GetUserRoleById(ctx context.Context, id int64) (string, string, error) {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return "", "", err
 	}
@@ -174,6 +178,7 @@ func GetUserRoleById(ctx context.Context, id int64) (string, string, error) {
 }
 func GetRoles(ctx context.Context) ([]string, error) {
 	db, err := GetDB()
+	defer db.Close()
 	if err != nil {
 		return nil, err
 	}
