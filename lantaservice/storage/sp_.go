@@ -222,7 +222,6 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	res = FromSPPeriodDB(&temp)
 	res.Billing = billings
 	res.Invoice = invoices
-	defer db.Close()
 	return res, nil
 }
 

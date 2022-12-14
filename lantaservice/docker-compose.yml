@@ -1,0 +1,61 @@
+version: "3.9"
+services:
+
+  lanta.postgres:
+    container_name: db
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Wt2H1aqF
+      POSTGRES_DB: lanta_1
+      PGDATA: /var/lib/postgresql/data/pgdata
+      PGPORT: 6543
+    ports:
+      - '18000:6543'
+    volumes:
+      - ./db/database:/var/lib/postgresql/data
+#      - ./db/sql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    networks:
+      - net
+
+  lanta.backend:
+    container_name: backend
+    image: golang
+    build:
+      context: .
+    environment:
+#      DB_NAME: lanta_1
+#      DB_SCHEMA: public
+#      DB_USER: postgres
+#      DB_PASSWORD: Wt2H1aqF
+##      DB_HOST: db
+#      DB_PORT: 6543
+      host: db
+#      IS_DOCKERED: true
+      GOPATH: /usr/src/app/.go
+    depends_on:
+      - lanta.postgres
+    working_dir: /usr/src/app
+    ports:
+      - '8081:8080'
+    command: go run /usr/src/app/main.go web
+    restart: on-failure
+    networks:
+      - net
+    volumes:
+      - .:/usr/src/app
+#      - ./server:/usr/src/back/
+#      - ./client/build:/usr/src/front/client/build
+
+  lanta:
+    build: ../../../../a.piryakina/WebstormProjects/lantafront
+
+    ports:
+      - "4200:4200"
+      - "49153:49153"
+    volumes:
+      - "/app/node_modules"
+      - ".:/app"
+networks:
+  net:
+    driver: bridge

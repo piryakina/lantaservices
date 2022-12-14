@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"lantaservice/storage"
 	"lantaservice/webserver"
 	"log"
 	"net/http"
@@ -10,11 +11,11 @@ import (
 )
 
 func main() {
-
+	storage.DBRU = storage.NewStorage()
 	Router := webserver.NewRouter()
 	Router.Use(webserver.SessionMiddleware)
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4200", "https://dbc3-94-25-185-137.eu.ngrok.io"},
+		AllowedOrigins:   []string{"http://localhost:4200"},
 		AllowCredentials: true,
 	})
 
