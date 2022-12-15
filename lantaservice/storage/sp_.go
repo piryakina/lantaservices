@@ -248,9 +248,11 @@ func AddDataSpPeriodStorage(ctx context.Context, data *entities.SpPeriod) error 
 	if len(data.Billing) != 0 {
 		for i := 0; i < len(data.Billing); i++ {
 			if data.Billing[i].Filename != "" {
-				query = "insert into billing_file (filename,path,date,status, sp_period_id) values ($1,$2,$3,$4,$5)"
-				row = db.QueryRowContext(ctx, query, data.Billing[i].Filename, data.Billing[i].Path, time.Now(), 1, idSpPeriod)
-				if err := row.Err(); err != nil {
+				query = "insert into billing_file (filename,path,date,status, sp_period_id) values ($1,$2,$3,$4,$5) returning id"
+				var bId int64
+				err := db.QueryRowContext(ctx, query, data.Billing[i].Filename, data.Billing[i].Path, time.Now(), 1, idSpPeriod).Scan(&bId)
+				if err != nil {
+					log.Fatal(err)
 					return err
 				}
 			}
