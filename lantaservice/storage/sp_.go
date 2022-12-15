@@ -24,7 +24,7 @@ type SpPeriodDB struct {
 	Period   sql.NullString `db:"period"`
 	Quality  sql.NullString `db:"quality"`
 	Invoice  sql.NullString `db:"invoice"`
-	Vehicles int64          `db:"vehicle_service"`
+	Vehicles sql.NullInt64  `db:"vehicle_service"`
 }
 type BillingFileDB struct {
 	ID       int64          `db:"id"`
@@ -113,10 +113,10 @@ func FromSPPeriodDB(p *SpPeriodDB) *entities.SpPeriod {
 	if p.Quality.Valid {
 		qu = p.Quality.String
 	}
-	//var inv string
-	//if p.Invoice.Valid {
-	//	inv = p.Invoice.String
-	//}
+	var vech int64
+	if p.Vehicles.Valid {
+		vech = p.Vehicles.Int64
+	}
 	return &entities.SpPeriod{
 		ID:      p.ID,
 		Sp:      sp,
@@ -126,7 +126,7 @@ func FromSPPeriodDB(p *SpPeriodDB) *entities.SpPeriod {
 		//	Filename: inv,
 		//	Date:     time.Time{},
 		//},
-		Vehicle: p.Vehicles,
+		Vehicle: vech,
 	}
 }
 
@@ -222,7 +222,6 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	res = FromSPPeriodDB(&temp)
 	res.Billing = billings
 	res.Invoice = invoices
-	defer db.Close()
 	return res, nil
 }
 
