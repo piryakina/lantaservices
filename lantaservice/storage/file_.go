@@ -95,10 +95,11 @@ func SaveBilling(filename string, path string, id int64, status string, idPeriod
 		StatusId = 1
 	}
 	date := time.Now()
-	query = "INSERT INTO billing_file (filename, path,status,date, sp_period_id ) VALUES ($1, $2,$3,$4,$5)"
-	row := db.QueryRow(query, filename, path, StatusId, date, spPeriodId)
-	if err = row.Err(); err != nil {
-		return row.Err()
+	query = "INSERT INTO billing_file (filename, path,status,date, sp_period_id ) VALUES ($1, $2,$3,$4,$5) returning id"
+	var fileId int64
+	err = db.QueryRow(query, filename, path, StatusId, date, spPeriodId).Scan(&fileId)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -111,10 +112,11 @@ func SaveInvoice(filename string, path string, id int64, idPeriod int64) error {
 		return err
 	}
 	date := time.Now()
-	query = "INSERT INTO invoice_file (filename, path,sp_period_id,date) VALUES ($1, $2, $3,$4)"
-	row = db.QueryRow(query, filename, path, idPeriod, date)
-	if row.Err() != nil {
-		return row.Err()
+	query = "INSERT INTO invoice_file (filename, path,sp_period_id,date) VALUES ($1, $2, $3,$4) returning id"
+	var fileId int64
+	err := db.QueryRow(query, filename, path, idPeriod, date).Scan(&fileId)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -127,10 +129,11 @@ func SaveAttach(filename string, path string, id int64) error { //todo attach
 	//if err = row.Scan(&spPeriodId); err != nil {
 	//	return err
 	//}
-	query := "INSERT INTO attachment (filename, path,news_id) VALUES ($1, $2, $3)"
-	row := db.QueryRow(query, filename, path, id)
-	if row.Err() != nil {
-		return row.Err()
+	query := "INSERT INTO attachment (filename, path,news_id) VALUES ($1, $2, $3) returning id"
+	var attach int64
+	err := db.QueryRow(query, filename, path, id).Scan(&attach)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -179,18 +182,20 @@ func SetStatusStorage(ctx context.Context, statusId int64, fileId int64) error {
 	//if err = row.Scan(&spPeriod); err != nil {
 	//	return err
 	//}
-	query := "update billing_file set status=$1 where id=$2"
-	row := db.QueryRowContext(ctx, query, statusId, fileId)
-	if err := row.Err(); err != nil {
+	query := "update billing_file set status=$1 where id=$2 returning id"
+	var idFile int64
+	err := db.QueryRowContext(ctx, query, statusId, fileId).Scan(&idFile)
+	if err != nil {
 		return err
 	}
 	return nil
 }
 func SetCommentFile(ctx context.Context, text string, id int64) error {
 	db := GetDB()
-	query := "update billing_file set comments=$1 where id=$2"
-	row := db.QueryRowContext(ctx, query, text, id)
-	if err := row.Err(); err != nil {
+	query := "update billing_file set comments=$1 where id=$2 returning id"
+	var idFile int64
+	err := db.QueryRowContext(ctx, query, text, id).Scan(&idFile)
+	if err != nil {
 		return err
 	}
 	return nil
@@ -199,11 +204,8 @@ func SetCommentFile(ctx context.Context, text string, id int64) error {
 func GetFileInfoById(ctx context.Context, id int64) (*entities.BillingFile, error) {
 	db := GetDB()
 	fmt.Println(id)
-	query := "select id, filename, path, status, date, comments from billing_file where id = $1"
+	query := "select id, filename, path, status, date, comments from billing_file where id = $1 returning id"
 	row := db.QueryRowContext(ctx, query, id)
-	if err := row.Err(); err != nil {
-		return nil, err
-	}
 	var doc entities.BillingFile
 	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.Status, &doc.Date, &doc.Comments); err != nil {
 		return nil, err
