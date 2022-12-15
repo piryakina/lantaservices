@@ -3,7 +3,7 @@ services:
 
   lanta.postgres:
     container_name: db
-    image: postgres
+    image: postgres:14-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Wt2H1aqF
@@ -47,6 +47,15 @@ services:
 #    volumes:
 #      - /app/node_modules
 ##      - .
+#  lanta.front: # The name of the service
+#    container_name: angularcontainer  # Container name
+#    build: ./angulardockerproject # Location of our Dockerfile
+#    volumes: # Volume binding
+#      - './angulardockerproject:/usr/src/app'
+#    ports:
+#      - '4201:4200' # Port mapping
+#    command: >
+#      bash -c "npm install && ng serve --host 0.0.0.0 --port 4201"
 networks:
   net:
     driver: bridge

@@ -67,17 +67,28 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File,
 func SaveBilling(filename string, path string, id int64, status string, idPeriod int64) error {
 	db := GetDB()
 	query := "select id from sp_period where sp=$1 and period=$2"
-	row := db.QueryRow(query, id, idPeriod)
 	var spPeriodId int64
-	if err := row.Scan(&spPeriodId); err != nil {
-		return err
+	err := db.QueryRow(query, id, idPeriod).Scan(&spPeriodId)
+	switch {
+	case err == sql.ErrNoRows:
+		log.Printf("no rows with id %d\n", id)
+		query = "insert into sp_period (sp,period) values ($1,$2) returning id"
+		err = db.QueryRow(query, id, idPeriod).Scan(&spPeriodId)
+		if err != nil {
+			return err
+		}
+	case err != nil:
+		log.Fatalf("query error: %v\n", err)
 	}
+	//if err := row.Scan(&spPeriodId); err != nil {
+	//	return err
+	//}
 	var StatusId int64
 	if status != "" {
 		query = "select id from docs_status where status_name=$1"
-		row = db.QueryRow(query, status)
+		row := db.QueryRow(query, status)
 
-		if err := row.Scan(&StatusId); err != nil {
+		if err = row.Scan(&StatusId); err != nil {
 			return err
 		}
 	} else {
@@ -85,11 +96,10 @@ func SaveBilling(filename string, path string, id int64, status string, idPeriod
 	}
 	date := time.Now()
 	query = "INSERT INTO billing_file (filename, path,status,date, sp_period_id ) VALUES ($1, $2,$3,$4,$5)"
-	row = db.QueryRow(query, filename, path, StatusId, date, spPeriodId)
-	if err := row.Err(); err != nil {
+	row := db.QueryRow(query, filename, path, StatusId, date, spPeriodId)
+	if err = row.Err(); err != nil {
 		return row.Err()
 	}
-	defer db.Close()
 	return nil
 }
 func SaveInvoice(filename string, path string, id int64, idPeriod int64) error {
