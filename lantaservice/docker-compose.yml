@@ -4,6 +4,7 @@ services:
   lanta.postgres:
     container_name: db
     image: postgres:14-alpine
+    restart: on-failure
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Wt2H1aqF
@@ -13,7 +14,7 @@ services:
     ports:
       - '18000:6543'
     volumes:
-      - ./db/database:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 #      - ./db/sql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
     networks:
       - net
@@ -59,3 +60,6 @@ services:
 networks:
   net:
     driver: bridge
+volumes:
+  postgres-data:
+    name: postgres-data
