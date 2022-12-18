@@ -18,8 +18,8 @@ func main() {
 		AllowedOrigins:   []string{"http://localhost:4200"},
 		AllowCredentials: true,
 	})
-
-	http.Handle("/", Router)
+	//http.Handle("/", Router)
+	http.HandleFunc("*", webserver.Front)
 	fmt.Println("Сервер запущен")
 	err := http.ListenAndServe(":8080", c.Handler(Router))
 	if err != nil {

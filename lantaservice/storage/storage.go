@@ -11,13 +11,13 @@ import (
 var DBRU *sqlx.DB
 
 const (
-	port = 6543
-	//port = 5432
+	//port = 6543
+	port = 5432
 	user = "postgres"
 	//password = "12345678"
-	password = "Wt2H1aqF"
-	//password = "winx2011"
-	dbname = "lanta_1"
+	//password = "Wt2H1aqF"
+	password = "winx2011"
+	dbname   = "lanta_1"
 )
 
 type Storage struct {
@@ -34,7 +34,7 @@ func NewStorage() *sqlx.DB {
 }
 func InitDB() (*sqlx.DB, error) {
 	host := os.Getenv("host")
-	//fmt.Println(host)
+	fmt.Println(host)
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
