@@ -1,10 +1,10 @@
 package entities
 
 type News struct {
-	Id          int64     `json:"id"`
-	Title       string    `json:"title"`
-	Text        string    `json:"text"`
-	Date        string    `json:"date"`
+	Id          int64     `json:"id,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Text        string    `json:"text,omitempty"`
+	Date        string    `json:"date,omitempty"`
 	Attachments []*Attach `json:"attachments,omitempty"`
 }
 

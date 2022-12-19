@@ -223,7 +223,6 @@ func GetImgById(ctx context.Context, id int64) (*entities.Attach, error) {
 	err := db.QueryRowContext(ctx, query, id).Scan(&doc.Id, &doc.Filename, &doc.Path)
 	switch {
 	case err == sql.ErrNoRows:
-		log.Printf("no rows by id%d\n", id)
 		return nil, nil
 	case err != nil:
 		log.Fatalf("query error: %v\n", err)

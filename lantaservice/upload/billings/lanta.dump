@@ -1,0 +1,703 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.6
+-- Dumped by pg_dump version 14.6
+
+-- Started on 2022-12-15 11:40:51
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 3398 (class 1262 OID 16616)
+-- Name: lanta_1; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE lanta_1 WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'Russian_Russia.1251';
+
+
+ALTER DATABASE lanta_1 OWNER TO postgres;
+
+\connect lanta_1
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 226 (class 1259 OID 16718)
+-- Name: attachment; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.attachment (
+    id integer NOT NULL,
+    path character varying,
+    filename character varying,
+    news_id integer
+);
+
+
+ALTER TABLE public.attachment OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 16717)
+-- Name: attachment_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.attachment ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.attachment_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 209 (class 1259 OID 16617)
+-- Name: billing_file; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.billing_file (
+    id integer NOT NULL,
+    filename character varying,
+    path character varying,
+    status integer DEFAULT 1,
+    sp_period_id integer,
+    date date DEFAULT (now())::date,
+    comments character varying
+);
+
+
+ALTER TABLE public.billing_file OWNER TO postgres;
+
+--
+-- TOC entry 210 (class 1259 OID 16623)
+-- Name: docs_status; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.docs_status (
+    id integer NOT NULL,
+    status_name character varying
+);
+
+
+ALTER TABLE public.docs_status OWNER TO postgres;
+
+--
+-- TOC entry 211 (class 1259 OID 16628)
+-- Name: docs_status_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.docs_status ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.docs_status_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 212 (class 1259 OID 16629)
+-- Name: file_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.billing_file ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.file_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 213 (class 1259 OID 16630)
+-- Name: invoice_file; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.invoice_file (
+    id integer NOT NULL,
+    filename character varying,
+    path character varying,
+    date date DEFAULT (now())::date NOT NULL,
+    sp_period_id integer
+);
+
+
+ALTER TABLE public.invoice_file OWNER TO postgres;
+
+--
+-- TOC entry 214 (class 1259 OID 16636)
+-- Name: invoice_file_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.invoice_file ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.invoice_file_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 215 (class 1259 OID 16637)
+-- Name: news; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.news (
+    id integer NOT NULL,
+    title character varying,
+    text character varying,
+    date character varying
+);
+
+
+ALTER TABLE public.news OWNER TO postgres;
+
+--
+-- TOC entry 216 (class 1259 OID 16642)
+-- Name: news_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.news ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.news_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 217 (class 1259 OID 16643)
+-- Name: period; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.period (
+    id integer NOT NULL,
+    date_from character varying,
+    date_to character varying,
+    title character varying
+);
+
+
+ALTER TABLE public.period OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16648)
+-- Name: period_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.period ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.period_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 219 (class 1259 OID 16649)
+-- Name: role; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.role (
+    id integer NOT NULL,
+    role character varying
+);
+
+
+ALTER TABLE public.role OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16654)
+-- Name: role_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.role ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 221 (class 1259 OID 16655)
+-- Name: sp_period; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.sp_period (
+    id integer NOT NULL,
+    sp integer,
+    period integer,
+    vehicle_service integer,
+    quality character varying
+);
+
+
+ALTER TABLE public.sp_period OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16660)
+-- Name: sp_period_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.sp_period ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.sp_period_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 223 (class 1259 OID 16661)
+-- Name: user; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."user" (
+    id integer NOT NULL,
+    login character varying(256),
+    password character varying(256),
+    name character varying,
+    email character varying,
+    phone character varying,
+    role integer
+);
+
+
+ALTER TABLE public."user" OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16666)
+-- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."user" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 3392 (class 0 OID 16718)
+-- Dependencies: 226
+-- Data for Name: attachment; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.attachment (id, path, filename, news_id) FROM stdin;
+2	upload\\attachments\\Снимок экрана_20221130_154618.png	Снимок экрана_20221130_154618.png	5
+\.
+
+
+--
+-- TOC entry 3375 (class 0 OID 16617)
+-- Dependencies: 209
+-- Data for Name: billing_file; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.billing_file (id, filename, path, status, sp_period_id, date, comments) FROM stdin;
+7	.gitlab-ci.yml	upload\\billings\\.gitlab-ci.yml	1	4	2022-12-06	\N
+8	docker-compose.test.yaml	upload\\billings\\docker-compose.test.yaml	1	4	2022-12-06	\N
+10	docker-compose.unit.yaml	upload\\billings\\docker-compose.unit.yaml	1	4	2022-12-07	\N
+6	nginx.conf	upload\\billings\\nginx.conf	1	4	2022-12-06	be
+5	Снимок экрана_20221130_092049.png	upload\\billings\\Снимок экрана_20221130_092049.png	1	4	2022-12-06	
+11	.gitignore	upload\\billings\\.gitignore	3	4	2022-12-07	\N
+9	README.md	upload\\billings\\README.md	2	4	2022-12-07	\N
+13	README.md	upload\\billings\\README.md	3	4	2022-12-07	\N
+4	test.txt	upload\\billings\\test.txt	3	4	2022-12-06	\N
+12	.dockerignore	upload\\billings\\.dockerignore	5	4	2022-12-07	
+\.
+
+
+--
+-- TOC entry 3376 (class 0 OID 16623)
+-- Dependencies: 210
+-- Data for Name: docs_status; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.docs_status (id, status_name) FROM stdin;
+1	ожидание проверки
+2	на проверке в отделе аналитики
+3	проверен в отделе аналитики
+4	отправлен на доработку из отдела аналитики
+5	отправлен на согласование c SLA
+6	принят в работу отделом УСП
+8	ожидание ответа от СП
+10	отправлен  на доработку в УСП
+\.
+
+
+--
+-- TOC entry 3379 (class 0 OID 16630)
+-- Dependencies: 213
+-- Data for Name: invoice_file; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.invoice_file (id, filename, path, date, sp_period_id) FROM stdin;
+7	main.go	upload\\invoices\\main.go	2022-12-07	5
+\.
+
+
+--
+-- TOC entry 3381 (class 0 OID 16637)
+-- Dependencies: 215
+-- Data for Name: news; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.news (id, title, text, date) FROM stdin;
+1	title	text	2022-12-07
+2	test	qweqweqwe	2022-12-12
+3	test	teest	2022-12-12
+4	test	qweqweqweqweq	2022-12-12
+5	test	qweqweqweqweq	2022-12-12
+6	jjjjj	jjjjjj	2022-12-12
+7	jjjjj111	jjjjjj111	2022-12-12
+\.
+
+
+--
+-- TOC entry 3383 (class 0 OID 16643)
+-- Dependencies: 217
+-- Data for Name: period; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.period (id, date_from, date_to, title) FROM stdin;
+6	2022-12-15 00:00:00Z	2023-01-15 00:00:00Z	december
+5	2022-11-15 00:00:00Z	2022-12-15 00:00:00Z	november
+7	2023-01-15 00:00:00Z	2023-02-14 00:00:00Z	Январь 2023
+\.
+
+
+--
+-- TOC entry 3385 (class 0 OID 16649)
+-- Dependencies: 219
+-- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.role (id, role) FROM stdin;
+1	администратор
+2	аналитик
+3	усп
+4	сп
+\.
+
+
+--
+-- TOC entry 3387 (class 0 OID 16655)
+-- Dependencies: 221
+-- Data for Name: sp_period; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.sp_period (id, sp, period, vehicle_service, quality) FROM stdin;
+6	7	6	45	30%
+4	7	5	45	73%
+2	2	5	50	60%
+3	2	5	45	73%
+5	2	5	45	30%
+\.
+
+
+--
+-- TOC entry 3389 (class 0 OID 16661)
+-- Dependencies: 223
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."user" (id, login, password, name, email, phone, role) FROM stdin;
+2	anna	$2a$10$iz3riPBy3gqjxeCrAIfc.ebVA0.2VoLoSGoj2EsqoQ5RCEfy8lxWW	piryakina	piryakina.a@ya.ru	888888888	1
+3	usp	$2a$10$4jRR5qkxGJRIEL593QXk9OXrEF77HeaLhls2xJuUN67oellblFLAK	aboba	mail	55555555	3
+5	analytic	$2a$10$6OitRnd85qoYci2HA7rKg.YRBhrIk9HhMCvtt1UP/B/EbOa/jb38y	aboba	mail	55555555	2
+7	sp	$2a$10$Xmfbuy.lT7LrVl8fK1GcjOP4Vn6Z.ZLZpQnl0DaCB2zYPSejk0MRS	asdf	mail	55555555	4
+\.
+
+
+--
+-- TOC entry 3399 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: attachment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.attachment_id_seq', 2, true);
+
+
+--
+-- TOC entry 3400 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: docs_status_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.docs_status_id_seq', 10, true);
+
+
+--
+-- TOC entry 3401 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.file_id_seq', 13, true);
+
+
+--
+-- TOC entry 3402 (class 0 OID 0)
+-- Dependencies: 214
+-- Name: invoice_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.invoice_file_id_seq', 7, true);
+
+
+--
+-- TOC entry 3403 (class 0 OID 0)
+-- Dependencies: 216
+-- Name: news_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.news_id_seq', 7, true);
+
+
+--
+-- TOC entry 3404 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: period_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.period_id_seq', 7, true);
+
+
+--
+-- TOC entry 3405 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.role_id_seq', 4, true);
+
+
+--
+-- TOC entry 3406 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: sp_period_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.sp_period_id_seq', 6, true);
+
+
+--
+-- TOC entry 3407 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_id_seq', 11, true);
+
+
+--
+-- TOC entry 3224 (class 2606 OID 16668)
+-- Name: user UK_Login; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT "UK_Login" UNIQUE (login) INCLUDE (login);
+
+
+--
+-- TOC entry 3228 (class 2606 OID 16724)
+-- Name: attachment attachment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.attachment
+    ADD CONSTRAINT attachment_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3210 (class 2606 OID 16670)
+-- Name: docs_status docs_status_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.docs_status
+    ADD CONSTRAINT docs_status_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3208 (class 2606 OID 16672)
+-- Name: billing_file file_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.billing_file
+    ADD CONSTRAINT file_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3212 (class 2606 OID 16674)
+-- Name: invoice_file invoice_file_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.invoice_file
+    ADD CONSTRAINT invoice_file_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3214 (class 2606 OID 16676)
+-- Name: news news_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.news
+    ADD CONSTRAINT news_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3216 (class 2606 OID 16678)
+-- Name: period period_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.period
+    ADD CONSTRAINT period_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3218 (class 2606 OID 16680)
+-- Name: period period_title_title1_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.period
+    ADD CONSTRAINT period_title_title1_key UNIQUE (title) INCLUDE (title);
+
+
+--
+-- TOC entry 3220 (class 2606 OID 16682)
+-- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role
+    ADD CONSTRAINT role_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3222 (class 2606 OID 16684)
+-- Name: sp_period sp_period_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sp_period
+    ADD CONSTRAINT sp_period_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3226 (class 2606 OID 16686)
+-- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3229 (class 2606 OID 16687)
+-- Name: billing_file FK_File_Status; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.billing_file
+    ADD CONSTRAINT "FK_File_Status" FOREIGN KEY (status) REFERENCES public.docs_status(id) NOT VALID;
+
+
+--
+-- TOC entry 3232 (class 2606 OID 16692)
+-- Name: sp_period FK_Period_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sp_period
+    ADD CONSTRAINT "FK_Period_id" FOREIGN KEY (period) REFERENCES public.period(id) NOT VALID;
+
+
+--
+-- TOC entry 3235 (class 2606 OID 16725)
+-- Name: attachment attachment_news_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.attachment
+    ADD CONSTRAINT attachment_news_id_fkey FOREIGN KEY (news_id) REFERENCES public.news(id);
+
+
+--
+-- TOC entry 3230 (class 2606 OID 16697)
+-- Name: billing_file file_sp_period_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.billing_file
+    ADD CONSTRAINT file_sp_period_id_fkey FOREIGN KEY (sp_period_id) REFERENCES public.sp_period(id) NOT VALID;
+
+
+--
+-- TOC entry 3231 (class 2606 OID 16702)
+-- Name: invoice_file invoice_file_sp_period_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.invoice_file
+    ADD CONSTRAINT invoice_file_sp_period_fkey FOREIGN KEY (sp_period_id) REFERENCES public.sp_period(id) NOT VALID;
+
+
+--
+-- TOC entry 3233 (class 2606 OID 16707)
+-- Name: sp_period sp_period_sp_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sp_period
+    ADD CONSTRAINT sp_period_sp_fkey FOREIGN KEY (sp) REFERENCES public."user"(id) NOT VALID;
+
+
+--
+-- TOC entry 3234 (class 2606 OID 16712)
+-- Name: user user_role_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_role_fkey FOREIGN KEY (role) REFERENCES public.role(id) NOT VALID;
+
+
+-- Completed on 2022-12-15 11:40:51
+
+--
+-- PostgreSQL database dump complete
+--
+
