@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"os"
+	//"os"
 
 	_ "github.com/lib/pq"
 )
@@ -11,13 +11,14 @@ import (
 var DBRU *sqlx.DB
 
 const (
-	port = 6543
+	host="localhost"
+	port = 5432
 	//port = 5432
 	user = "postgres"
 	//password = "12345678"
 	password = "Wt2H1aqF"
 	//password = "winx2011"
-	dbname = "lanta_1"
+	dbname = "lanta_db"
 )
 
 type Storage struct {
@@ -33,8 +34,8 @@ func NewStorage() *sqlx.DB {
 	return dbRu
 }
 func InitDB() (*sqlx.DB, error) {
-	host := os.Getenv("host")
-	fmt.Println(host)
+	//host := os.Getenv("host")
+	//fmt.Println(host)
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
