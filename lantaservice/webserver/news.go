@@ -19,7 +19,7 @@ func AddNews(w http.ResponseWriter, r *http.Request) {
 	}
 	date := time.Now().Format("02-01-2006")
 	//l := "2001-06-5"
-	c.Date = date
+	c.Date = string(date)
 	fmt.Println(c.Date)
 	id, err := usecase.AddNews(ctx, c)
 	if err != nil {
