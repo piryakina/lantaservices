@@ -15,7 +15,7 @@ func main() {
 	Router := webserver.NewRouter()
 	Router.Use(webserver.SessionMiddleware)
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowedOrigins:   []string{"http://localhost:4200","http://sp.lantaservice.com:4200"},
 		AllowCredentials: true,
 	})
 
