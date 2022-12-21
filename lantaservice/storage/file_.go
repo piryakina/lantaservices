@@ -201,10 +201,10 @@ func SetCommentFile(ctx context.Context, text string, id int64) error {
 func GetFileInfoById(ctx context.Context, id int64) (*entities.BillingFile, error) {
 	db := GetDB()
 	fmt.Println(id)
-	query := "select id, filename, path from billing_file where id = $1"
+	query := "select id, filename, path,date from billing_file where id = $1"
 	row := db.QueryRowContext(ctx, query, id)
 	var doc BillingFileDB
-	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path); err != nil {
+	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.Date, &doc.Comments); err != nil {
 		return nil, err
 	}
 	//fmt.Println(doc.ID)
