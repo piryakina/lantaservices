@@ -87,6 +87,8 @@ func fromFileDB(p BillingFileDB) *entities.BillingFile {
 	var date time.Time
 	fmt.Println(p.Date)
 	date, err := time.Parse(layout, p.Date)
+	fmt.Println(date)
+
 	if err != nil {
 		log.Fatal(err)
 	}
