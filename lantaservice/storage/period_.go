@@ -38,9 +38,9 @@ func FromPeriodDB(p PeriodDB) *entities.Period {
 }
 func GetPeriodNowStorage(ctx context.Context, date time.Time) (*entities.Period, error) {
 	db := GetDB()
-
+	d := date.Format("2006-01-02")
 	query := "SELECT * FROM period WHERE $1 between date_from and date_to"
-	row := db.QueryRowContext(ctx, query, date)
+	row := db.QueryRowContext(ctx, query, d)
 	var period *entities.Period
 	var temp PeriodDB
 	if err := row.Scan(&temp.Id, &temp.DateFrom, &temp.DateTo, &temp.Title); err != nil {
