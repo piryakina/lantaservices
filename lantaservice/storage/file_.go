@@ -204,7 +204,7 @@ func GetFileInfoById(ctx context.Context, id int64) (*entities.BillingFile, erro
 	query := "select id, filename, path,date from billing_file where id = $1"
 	row := db.QueryRowContext(ctx, query, id)
 	var doc BillingFileDB
-	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.Date, &doc.Comments); err != nil {
+	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.Date); err != nil {
 		return nil, err
 	}
 	//fmt.Println(doc.ID)
