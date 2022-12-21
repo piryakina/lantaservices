@@ -86,7 +86,7 @@ func fromFileDB(p BillingFileDB) *entities.BillingFile {
 	//layout := "2006-01-02" //todo yyyy-mm-dd
 	var date time.Time
 	fmt.Println(p.Date)
-	date, err := time.Parse("2006-01-02T15:04:05.000Z", p.Date)
+	date, err := time.Parse("2006-01-02T15:04:05Z", p.Date)
 	fmt.Println(date)
 	//date = date.Format("2006-01-02")
 	if err != nil {
