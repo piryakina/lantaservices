@@ -27,7 +27,7 @@ func NewRouter() *mux.Router {
 func Routing() []Route {
 	return []Route{
 		{"test", "GET", "/test", test},
-		{"index", "GET", "/", Index},
+		//{"index", "GET", "/", Index},
 		{"login", "POST", "/login", Login},
 		{"logout", "GET", "/logout", Logout},
 		//users
