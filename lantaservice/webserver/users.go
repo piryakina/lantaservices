@@ -58,7 +58,7 @@ func CheckLogin(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
-	fmt.Println(login)
+	fmt.Println("kkk")
 	isUse, err := usecase.CheckUserLogin(ctx, login)
 	if err != nil {
 		ErrorResponse(w, err)
