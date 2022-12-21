@@ -24,7 +24,9 @@ func DownloadBilling(w http.ResponseWriter, r *http.Request) {
 	// 	Status: true,
 	// 	Detail: filePath,
 	// }, 200)
-	http.ServeFile(w, r, filePath)
+	if filePath != "" {
+		http.ServeFile(w, r, filePath)
+	}
 }
 
 func GetImg(w http.ResponseWriter, r *http.Request) {

@@ -14,9 +14,15 @@ import (
 	"time"
 )
 
-func GetFileByOwnerId(ctx context.Context, id int64) {
-
+type BillingDb struct {
+	ID       int64  `db:"id"`
+	Filename string `db:"filename"`
+	Path     string `db:"path"`
+	Status   string `db:"status"`
+	Date     string `db:"date"`
+	Comments string `db:"comments"`
 }
+
 func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File, id int64, status string, idPeriod int64) (*string, error) {
 	fullPath := filepath.Join(fu.AbsPath, fu.Folder)
 	err := os.MkdirAll(fullPath, 0777)
