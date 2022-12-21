@@ -189,9 +189,9 @@ func SetStatusStorage(ctx context.Context, statusId int64, fileId int64) error {
 }
 func SetCommentFile(ctx context.Context, text string, id int64) error {
 	db := GetDB()
-	query := "update billing_file set comments=$1 where id=$2 returning id"
-	var idFile int64
-	err := db.QueryRowContext(ctx, query, text, id).Scan(&idFile)
+	query := "update billing_file set comments=$1 where id=$2 returning filanme"
+	var filaname string
+	err := db.QueryRowContext(ctx, query, text, id).Scan(&filaname)
 	if err != nil {
 		return err
 	}
