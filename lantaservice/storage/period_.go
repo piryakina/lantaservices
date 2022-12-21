@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"lantaservice/entities"
 	"log"
 	"time"
@@ -39,6 +40,7 @@ func FromPeriodDB(p PeriodDB) *entities.Period {
 func GetPeriodNowStorage(ctx context.Context, date time.Time) (*entities.Period, error) {
 	db := GetDB()
 	d := date.Format("2006-01-02")
+	fmt.Println(d + "ttt")
 	query := "SELECT * FROM period WHERE $1 between date_from and date_to"
 	row := db.QueryRowContext(ctx, query, d)
 	var period *entities.Period
