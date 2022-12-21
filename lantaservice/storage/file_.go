@@ -227,6 +227,7 @@ func GetImgById(ctx context.Context, id int64) (*entities.Attach, error) {
 		log.Fatalf("query error: %v\n", err)
 		return nil, err
 	default:
+		fmt.Println(doc.Path)
 		log.Printf("success")
 	}
 
