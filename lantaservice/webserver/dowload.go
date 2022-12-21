@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"fmt"
 	"lantaservice/usecase"
 	"net/http"
 	"strconv"
@@ -37,6 +38,7 @@ func GetImg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filePath, err := usecase.GetImgPath(ctx, fileId)
+	fmt.Println(filePath)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
