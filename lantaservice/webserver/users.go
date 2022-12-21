@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"lantaservice/entities"
 	"lantaservice/usecase"
 	"net/http"
@@ -57,6 +58,7 @@ func CheckLogin(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
+	fmt.Println(login)
 	isUse, err := usecase.CheckUserLogin(ctx, login)
 	if err != nil {
 		ErrorResponse(w, err)
