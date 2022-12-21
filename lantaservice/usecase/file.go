@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"lantaservice/entities"
 	"lantaservice/storage"
 	"mime/multipart"
@@ -66,6 +67,7 @@ func GetFilePath(ctx context.Context, fileId int64) (string, error) {
 
 func GetImgPath(ctx context.Context, fileId int64) (string, error) {
 	doc, err := storage.GetImgById(ctx, fileId)
+	fmt.Println(doc.Path)
 	if err != nil {
 		return "", err
 	}
