@@ -19,6 +19,7 @@ func FromPeriodDB(p PeriodDB) *entities.Period {
 	layout := "2006-01-02" //todo yyyy-mm-dd
 	var dateFrom time.Time
 	dateFrom, err := time.Parse(layout, p.DateFrom)
+	fmt.Println(dateFrom)
 	if err != nil {
 		log.Fatal(err)
 	}
