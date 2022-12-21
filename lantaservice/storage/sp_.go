@@ -204,7 +204,7 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 		if err = rows.Scan(&file.ID, &file.Filename, &file.Path, &file.Date, &file.Status); err != nil {
 			return nil, err
 		}
-		fmt.Println(file.ID)
+		//fmt.Println(file.ID)
 		billings = append(billings, file)
 	}
 	defer rows.Close()

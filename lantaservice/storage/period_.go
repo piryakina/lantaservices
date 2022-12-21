@@ -15,7 +15,7 @@ type PeriodDB struct {
 }
 
 func FromPeriodDB(p PeriodDB) *entities.Period {
-	layout := "2006-01-02 15:04:05Z" //todo yyyy-mm-dd
+	layout := "2006-01-02" //todo yyyy-mm-dd
 	var dateFrom time.Time
 	dateFrom, err := time.Parse(layout, p.DateFrom)
 	if err != nil {
