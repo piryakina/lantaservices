@@ -73,6 +73,6 @@ func GetImgPath(ctx context.Context, fileId int64) (string, error) {
 		return doc.Path, nil
 
 	} else {
-		return "assets/no-image.svg", nil
+		return "/home/a.piryakina/lanta/lantaservice/lantaservices/lantaservise/assets/no-image.svg", nil
 	}
 }
