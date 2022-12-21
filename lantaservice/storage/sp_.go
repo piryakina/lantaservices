@@ -86,7 +86,7 @@ func fromFileDB(p BillingFileDB) *entities.BillingFile {
 	//layout := "2006-01-02" //todo yyyy-mm-dd
 	var date time.Time
 	fmt.Println(p.Date)
-	date, err := time.Parse("2006-01-02T15:04:05Z", p.Date)
+	date, err := time.Parse("2006-01-02", p.Date)
 	fmt.Println(date)
 	//date = date.Format("2006-01-02")
 	if err != nil {
@@ -185,10 +185,14 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	}
 	query = "SELECT id,title FROM period WHERE $1 between date_from and date_to"
 	row = db.QueryRowContext(ctx, query, date)
-	if err := row.Scan(&idPeriod, &temp.Period); err != nil {
+	err := row.Scan(&idPeriod, &temp.Period)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		log.Fatalf("query error: %v\n", err)
 		return nil, err
 	}
-
 	query = "SELECT t1.id,t1.vehicle_service,t1.quality from sp_period as t1 where t1.sp=$1 and t1.period=$2"
 	row = db.QueryRowContext(ctx, query, idSp, idPeriod)
 	var res *entities.SpPeriod
