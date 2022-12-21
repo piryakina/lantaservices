@@ -53,7 +53,7 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	file := entities.File{
-		Folder:  "upload/billings",
+		Folder:  "home/a.piryakina/lanta/lantaservice/lantaservices/lantaservice/upload/billings",
 		AbsPath: path,
 	}
 	date := time.Now()
@@ -131,7 +131,7 @@ func UploadInvoice(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(date)
 	res, err := usecase.GetPeriodNow(ctx, date)
 	file := entities.File{
-		Folder:  "upload/invoices",
+		Folder:  "home/a.piryakina/lanta/lantaservice/lantaservices/lantaservice/upload/invoices",
 		AbsPath: path,
 	}
 	localPath, err := usecase.UploadInvoice(f, h, &file, id, res.Id)
@@ -252,7 +252,7 @@ func UploadAttachments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	file := entities.File{
-		Folder:  "upload/attachments",
+		Folder:  "home/a.piryakina/lanta/lantaservice/lantaservices/lantaservice/upload/attachments",
 		AbsPath: path,
 	}
 	localPath, err := usecase.UploadAttachment(f, h, &file, id)
