@@ -219,7 +219,7 @@ func GetImgById(ctx context.Context, id int64) (*entities.Attach, error) {
 	query := "select id, filename, path from attachment where news_id = $1"
 	var doc entities.Attach
 	err := db.QueryRowContext(ctx, query, id).Scan(&doc.Id, &doc.Filename, &doc.Path)
-	//fmt.Println(err)
+	fmt.Printf(doc.Path)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, nil
@@ -227,7 +227,7 @@ func GetImgById(ctx context.Context, id int64) (*entities.Attach, error) {
 		log.Fatalf("query error: %v\n", err)
 		return nil, err
 	default:
-		fmt.Println(doc.Path)
+		fmt.Printf(doc.Path)
 		log.Printf("success")
 	}
 
