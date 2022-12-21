@@ -48,3 +48,19 @@ func GetRoles(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 	JsonResponse(w, roles, 200)
 	//JsonResponse(w, StatusResponse{Status: true}, 200)
 }
+
+func CheckLogin(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var login string
+	err := json.NewDecoder(r.Body).Decode(&login)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	isUse, err := usecase.CheckUserLogin(ctx, login)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	JsonResponse(w, isUse, 200)
+}

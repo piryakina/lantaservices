@@ -43,6 +43,10 @@ func GetUserRoles(ctx context.Context) ([]string, error) {
 	return role, nil
 }
 
+func CheckUserLogin(ctx context.Context, login string) (bool, error) {
+	return storage.CheckUserLoginStorage(ctx, login)
+}
+
 type Hash struct{}
 
 //// Generate a salted hash for the input string

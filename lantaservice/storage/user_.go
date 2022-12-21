@@ -177,3 +177,17 @@ func GetRoles(ctx context.Context) ([]string, error) {
 	}
 	return roles, nil
 }
+func CheckUserLoginStorage(ctx context.Context, login string) (bool, error) {
+	db := GetDB()
+	query := "select id from \"user\" where login=$1"
+	var id int64
+	err := db.QueryRowContext(ctx, query, login).Scan(&id)
+	if err != nil {
+		return false, err
+	}
+	if id != 0 {
+		return false, nil
+	} else {
+		return true, nil
+	}
+}

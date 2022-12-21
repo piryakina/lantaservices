@@ -32,6 +32,7 @@ func Routing() []Route {
 		{"logout", "GET", "/logout", Logout},
 		//users
 		{"add-user", "POST", "/admin/add-user", AddUser},
+		{"check-user-unique-login", "POST", "/admin/checklogin", CheckLogin},
 		{"add-user", "GET", "/role", GetUserRoleById},
 		{"add-user", "GET", "/roles", GetRoles},
 		//{"add-user", "GET", "/sp", GetSPNameById},
