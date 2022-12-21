@@ -83,7 +83,7 @@ func fromFileDB(p BillingFileDB) *entities.BillingFile {
 	if p.Path.Valid {
 		path = p.Path.String
 	}
-	layout := "2006-01-02T15:04:05Z" //todo yyyy-mm-dd
+	layout := "2006-01-02" //todo yyyy-mm-dd
 	var date time.Time
 	date, err := time.Parse(layout, p.Date)
 	if err != nil {
