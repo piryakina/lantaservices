@@ -66,7 +66,7 @@ func FromSPDB(p *SPDB) *entities.SP {
 		NameCompany: n,
 	}
 }
-func fromFileDB(p *BillingFileDB) *entities.BillingFile {
+func fromFileDB(p BillingFileDB) *entities.BillingFile {
 	var filename string
 	if p.Filename.Valid {
 		filename = p.Filename.String
@@ -311,7 +311,7 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 			if err = rows2.Scan(&t.ID, &t.Filename, &t.Path, &t.Status, &t.Date, &t.Comments); err != nil {
 				return nil, err
 			}
-			temp.Billing = append(temp.Billing, *fromFileDB(&t))
+			temp.Billing = append(temp.Billing, *fromFileDB(t))
 		}
 		res = append(res, &temp)
 
