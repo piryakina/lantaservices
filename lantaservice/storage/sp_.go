@@ -399,7 +399,7 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 			if err = rows3.Scan(&t.ID, &t.Filename, &t.Path); err != nil {
 				return nil, err
 			}
-			temp.SLA = append(temp.SLA, *fromSLADB(t))
+			temp.SLA = *fromSLADB(t)
 		}
 		res = append(res, &temp)
 

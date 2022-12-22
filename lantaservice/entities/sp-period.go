@@ -10,7 +10,7 @@ type SpPeriod struct {
 	Invoice []InvoiceFile `json:"invoice,omitempty"`
 	Vehicle int64         `json:"vehicle,omitempty"`
 	Billing []BillingFile `json:"billing,omitempty"`
-	SLA     []SLAFile     `json:"sla,omitempty"`
+	SLA     SLAFile       `json:"sla,omitempty"`
 }
 
 type InvoiceFile struct {
