@@ -2,7 +2,6 @@ package webserver
 
 import (
 	"encoding/json"
-	"fmt"
 	"lantaservice/entities"
 	"lantaservice/usecase"
 	"net/http"
@@ -99,7 +98,7 @@ func GetDataPeriod(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
-	fmt.Println("ok down")
+	//fmt.Println("ok down")
 	rows, err := usecase.GetDataPeriod(ctx, res.Id)
 	if err != nil {
 		ErrorResponse(w, err)
