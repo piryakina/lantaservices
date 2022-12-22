@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+type StatusDB struct {
+	ID         int64  `db:"id"`
+	StatusName string `db:"status_name"`
+}
+
 func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File, id int64, status string, idPeriod int64) (*string, error) {
 	fullPath := filepath.Join(fu.AbsPath, fu.Folder)
 	err := os.MkdirAll(fullPath, 0777)
@@ -157,11 +162,12 @@ func GetStatusesStorage(ctx context.Context) ([]*entities.DocStatus, error) {
 	}
 	var res []*entities.DocStatus
 	for rows.Next() {
-		var st entities.DocStatus
-		if err = rows.Scan(&st.Id, &st.StatusName); err != nil {
+		var st StatusDB
+		if err = rows.Scan(&st.ID, &st.StatusName); err != nil {
 			return nil, err
 		}
-		res = append(res, &st)
+		var item = entities.DocStatus{Id: st.ID, StatusName: st.StatusName}
+		res = append(res, &item)
 	}
 	return res, nil
 }
