@@ -65,6 +65,20 @@ func GetFilePath(ctx context.Context, fileId int64) (string, error) {
 	return doc.Path, nil
 }
 
+func GetInvoicePath(ctx context.Context, fileId int64) (string, error) {
+	doc, err := storage.GetInvoiceInfoById(ctx, fileId)
+	if err != nil {
+		return "", err
+	}
+	return doc.Path, nil
+}
+func GetSLAPath(ctx context.Context, fileId int64) (string, error) {
+	doc, err := storage.GetSLAInfoById(ctx, fileId)
+	if err != nil {
+		return "", err
+	}
+	return doc.Path, nil
+}
 func GetImgPath(ctx context.Context, fileId int64) (string, error) {
 	doc, err := storage.GetImgById(ctx, fileId)
 

@@ -29,6 +29,14 @@ func GetDataSpPeriod(ctx context.Context, login string, date time.Time) (*entiti
 	return res, nil
 }
 
+//func GetInvoiceSpPeriod(ctx context.Context, login string, date time.Time) (*entities.SpPeriod, error) {
+//	res, err := storage.GetInvoiceSpPeriodStorage(ctx, login, date)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return res, nil
+//}
+
 func AddDataSpPeriod(ctx context.Context, date *entities.SpPeriod) error {
 	err := storage.AddDataSpPeriodStorage(ctx, date)
 	if err != nil {

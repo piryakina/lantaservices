@@ -64,6 +64,12 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File,
 			return nil, err
 		}
 	}
+	if strings.Contains(fullPath, "sla") {
+		err = SaveSLA(fileName, fileNameRelative, id)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return &fileNameRelative, nil
 }
 func SaveBilling(filename string, path string, id int64, status string, idPeriod int64) error {
@@ -134,6 +140,23 @@ func SaveAttach(filename string, path string, id int64) error { //todo attach
 	query := "INSERT INTO attachment (filename, path,news_id) VALUES ($1, $2, $3) returning id"
 	var attach int64
 	err := db.QueryRow(query, filename, path, id).Scan(&attach)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func SaveSLA(filename string, path string, id int64) error { //todo attach
+	db := GetDB()
+	//query := "select id from sp_perio where sp=$1 and period=$2"
+	//row := db.QueryRow(query, id, idPeriod)
+	//var spPeriodId int64
+	//if err = row.Scan(&spPeriodId); err != nil {
+	//	return err
+	//}
+	query := "INSERT INTO sla_file (filename, path,usp) VALUES ($1, $2, $3) returning id"
+	var sla int64
+	err := db.QueryRow(query, filename, path, id).Scan(&sla)
 	if err != nil {
 		return err
 	}
@@ -215,6 +238,34 @@ func GetFileInfoById(ctx context.Context, id int64) (*entities.BillingFile, erro
 	}
 	//fmt.Println(doc.ID)
 	file := fromFileDB(doc)
+	return file, nil
+}
+
+func GetInvoiceInfoById(ctx context.Context, id int64) (*entities.InvoiceFile, error) {
+	db := GetDB()
+	fmt.Println(id)
+	query := "select id, filename, path,date from invoice_file where id = $1"
+	row := db.QueryRowContext(ctx, query, id)
+	var doc InvoiceFileDB
+	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.Date); err != nil {
+		return nil, err
+	}
+	//fmt.Println(doc.ID)
+	file := fromInvoiceDB(doc)
+	return file, nil
+}
+
+func GetSLAInfoById(ctx context.Context, id int64) (*entities.SLAFile, error) {
+	db := GetDB()
+	fmt.Println(id)
+	query := "select id, filename, path, usp from sla_file where id = $1"
+	row := db.QueryRowContext(ctx, query, id)
+	var doc SLAFileDB
+	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.USP); err != nil {
+		return nil, err
+	}
+	//fmt.Println(doc.ID)
+	file := fromSLADB(doc)
 	return file, nil
 }
 

@@ -35,6 +35,20 @@ type BillingFileDB struct {
 	Comments sql.NullString `db:"comments"`
 }
 
+type InvoiceFileDB struct {
+	ID       int64          `db:"id"`
+	Filename sql.NullString `db:"filename"`
+	Path     sql.NullString `db:"path"`
+	Date     string         `db:"date"`
+}
+type SLAFileDB struct {
+	ID       int64          `db:"id"`
+	Filename sql.NullString `db:"filename"`
+	Path     sql.NullString `db:"path"`
+	Date     string         `db:"date"`
+	USP      sql.NullString `db:"usp"`
+}
+
 func FromSPDB(p *SPDB) *entities.SP {
 	var n string
 	if p.NameCompany.Valid {
@@ -99,6 +113,62 @@ func fromFileDB(p BillingFileDB) *entities.BillingFile {
 		Date:     date,
 		Status:   st,
 		Comments: comment,
+	}
+}
+
+func fromInvoiceDB(p InvoiceFileDB) *entities.InvoiceFile {
+	var filename string
+	if p.Filename.Valid {
+		filename = p.Filename.String
+	}
+	var path string
+	if p.Path.Valid {
+		path = p.Path.String
+	}
+	//layout := "2006-01-02" //todo yyyy-mm-dd
+	var date time.Time
+	fmt.Println(p.Date)
+	date, err := time.Parse("2006-01-02T15:04:05Z", p.Date)
+	fmt.Println(date)
+	//date = date.Format("2006-01-02")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &entities.InvoiceFile{
+		ID:       p.ID,
+		Filename: filename,
+		Path:     path,
+		Date:     date,
+	}
+}
+
+func fromSLADB(p SLAFileDB) *entities.SLAFile {
+	var filename string
+	if p.Filename.Valid {
+		filename = p.Filename.String
+	}
+	var path string
+	if p.Path.Valid {
+		path = p.Path.String
+	}
+	var usp string
+	if p.USP.Valid {
+		usp = p.USP.String
+	}
+	//layout := "2006-01-02" //todo yyyy-mm-dd
+	var date time.Time
+	fmt.Println(p.Date)
+	date, err := time.Parse("2006-01-02T15:04:05Z", p.Date)
+	fmt.Println(date)
+	//date = date.Format("2006-01-02")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &entities.SLAFile{
+		ID:       p.ID,
+		Filename: filename,
+		Path:     path,
+		USP:      usp,
 	}
 }
 

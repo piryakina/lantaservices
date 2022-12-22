@@ -19,6 +19,13 @@ type InvoiceFile struct {
 	Date     time.Time `json:"date,omitempty"`
 }
 
+type SLAFile struct {
+	ID       int64  `json:"id,omitempty"`
+	Filename string `json:"filename,omitempty"`
+	Path     string `json:"path,omitempty"`
+	USP      string `json:"usp,omitempty"`
+}
+
 type BillingFile struct {
 	ID       int64     `json:"id,omitempty"`
 	Filename string    `json:"filename,omitempty"`

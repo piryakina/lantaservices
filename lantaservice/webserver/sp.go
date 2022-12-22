@@ -42,6 +42,22 @@ func GetDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	JsonResponse(w, res, 200)
 }
 
+//func GetInvoicesByLogin(w http.ResponseWriter, r *http.Request) {
+//	ctx := r.Context()
+//	query := r.URL.Query()
+//	login := query.Get("login")
+//	date := time.Now()
+//	res, err := usecase.GetInvoiceSpPeriod(ctx, login, date)
+//	if res == nil {
+//		JsonResponse(w, nil, 200)
+//	}
+//	if err != nil {
+//		ErrorResponse(w, err)
+//		return
+//	}
+//	JsonResponse(w, res, 200)
+//}
+
 func AddDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c := &entities.SpPeriod{}

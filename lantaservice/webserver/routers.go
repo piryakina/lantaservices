@@ -39,6 +39,10 @@ func Routing() []Route {
 		//{"edit-user", "POST", "/admin/edit-user", nil},
 		//{"add-sp", "POST", "/admin/add-sp", AddSp},
 		//{"edit-sp", "POST", "/admin/edit-sp", nil},
+
+		//usp
+		{"upload-file", "POST", "/usp/sla", UploadSLA},
+		{"download-file", "GET", "/usp/sla/download", DownloadSLA},
 		//отчетные периоды
 		{"add-period", "POST", "/admin/add-period", AddNewPeriod},
 		//{"edit-period", "POST", "/admin/edit-period", nil},
@@ -63,6 +67,8 @@ func Routing() []Route {
 		{"download-file", "GET", "/billings/download", DownloadBilling},
 		//add score by sp
 		{"upload-file", "POST", "/invoice/upload", UploadInvoice},
+		//{"get-invoices", "GET", "/invoices", GetInvoicesByLogin},
+		{"download-file", "GET", "/invoice/download", DownloadInvoice},
 		//add response by analytic or usp
 		{"upload-file", "POST", "/attachment/upload", UploadAttachments},
 		//set comments
