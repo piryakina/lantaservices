@@ -33,7 +33,7 @@ func GetDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	date := time.Now()
 	res, err := usecase.GetDataSpPeriod(ctx, login, date)
 	if res == nil {
-		JsonResponse(w, StatusResponse{Status: false}, 200)
+		JsonResponse(w, nil, 200)
 	}
 	if err != nil {
 		ErrorResponse(w, err)
