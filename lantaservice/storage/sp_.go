@@ -199,7 +199,7 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	if err := row.Scan(&temp.ID, &temp.Vehicles, &temp.Quality); err != nil {
 		return nil, err
 	} //res = append(res)
-	query = "select b.id, b.filename,b.path,b.date, (select d.status_name from docs_status as d where d.id=b.status) as status from billing_file as b where b.sp_period_id=$1"
+	query = "select b.id, b.filename,b.path,b.date, (select d.status_name from docs_status as d where d.id=b.status) as status, comments from billing_file as b where b.sp_period_id=$1"
 	rows, err := db.QueryContext(ctx, query, temp.ID)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	var billings []entities.BillingFile
 	for rows.Next() {
 		var file entities.BillingFile
-		if err = rows.Scan(&file.ID, &file.Filename, &file.Path, &file.Date, &file.Status); err != nil {
+		if err = rows.Scan(&file.ID, &file.Filename, &file.Path, &file.Date, &file.Status, &file.Comments); err != nil {
 			return nil, err
 		}
 		//fmt.Println(file.ID)
