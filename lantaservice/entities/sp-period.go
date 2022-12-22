@@ -25,6 +25,7 @@ type SLAFile struct {
 	Filename string `json:"filename,omitempty"`
 	Path     string `json:"path,omitempty"`
 	USP      string `json:"usp,omitempty"`
+	SpPeriod int64  `json:"sp_period,omitempty"`
 }
 
 type BillingFile struct {

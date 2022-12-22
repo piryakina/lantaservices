@@ -45,8 +45,9 @@ type SLAFileDB struct {
 	ID       int64          `db:"id"`
 	Filename sql.NullString `db:"filename"`
 	Path     sql.NullString `db:"path"`
-	Date     string         `db:"date"`
+	//Date     string         `db:"date"`
 	USP      sql.NullString `db:"usp"`
+	SpPeriod int64          `db:"sp_period"`
 }
 
 func FromSPDB(p *SPDB) *entities.SP {
@@ -156,19 +157,20 @@ func fromSLADB(p SLAFileDB) *entities.SLAFile {
 		usp = p.USP.String
 	}
 	//layout := "2006-01-02" //todo yyyy-mm-dd
-	var date time.Time
-	fmt.Println(p.Date)
-	date, err := time.Parse("2006-01-02T15:04:05Z", p.Date)
-	fmt.Println(date)
-	//date = date.Format("2006-01-02")
-	if err != nil {
-		log.Fatal(err)
-	}
+	//var date time.Time
+	//fmt.Println(p.Date)
+	//date, err := time.Parse("2006-01-02T15:04:05Z", p.Date)
+	//fmt.Println(date)
+	////date = date.Format("2006-01-02")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 	return &entities.SLAFile{
 		ID:       p.ID,
 		Filename: filename,
 		Path:     path,
 		USP:      usp,
+		SpPeriod: p.SpPeriod,
 	}
 }
 
