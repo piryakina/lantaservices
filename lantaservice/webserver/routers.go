@@ -74,6 +74,6 @@ func Routing() []Route {
 		//set comments analytic
 		{"set-comment-file", "POST", "/set-comment", SetCommentFile},
 		//approve sla
-		{"set-comment-file", "POST", "/approve-sla", ApproveSla},
+		{"set-comment-file", "GET", "/approve-sla", ApproveSla},
 	}
 }
