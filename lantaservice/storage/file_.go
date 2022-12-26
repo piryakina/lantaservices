@@ -19,7 +19,7 @@ type StatusDB struct {
 	StatusName string `db:"status_name"`
 }
 
-func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File, id int64, status string, idPeriod int64) (*string, error) {
+func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File, id int64, status string, idPeriod int64, idSp int64) (*string, error) {
 	fullPath := filepath.Join(fu.AbsPath, fu.Folder)
 	err := os.MkdirAll(fullPath, 0777)
 	if err != nil {
@@ -65,7 +65,7 @@ func SaveFile(f multipart.File, header *multipart.FileHeader, fu *entities.File,
 		}
 	}
 	if strings.Contains(fullPath, "sla") {
-		err = SaveSLA(fileName, fileNameRelative, id)
+		err = SaveSLA(fileName, fileNameRelative, id, idPeriod, idSp)
 		if err != nil {
 			return nil, err
 		}
@@ -146,17 +146,17 @@ func SaveAttach(filename string, path string, id int64) error { //todo attach
 	return nil
 }
 
-func SaveSLA(filename string, path string, id int64) error { //todo attach
+func SaveSLA(filename string, path string, id int64, idPeriod int64, idSp int64) error { //todo attach
 	db := GetDB()
-	//query := "select id from sp_perio where sp=$1 and period=$2"
-	//row := db.QueryRow(query, id, idPeriod)
-	//var spPeriodId int64
-	//if err = row.Scan(&spPeriodId); err != nil {
-	//	return err
-	//}
-	query := "INSERT INTO sla_file (filename, path,usp) VALUES ($1, $2, $3) returning id"
+	query := "select id from sp_period where sp=$1 and period=$2"
+	row := db.QueryRow(query, idSp, idPeriod)
+	var spPeriodId int64
+	if err := row.Scan(&spPeriodId); err != nil {
+		return err
+	}
+	query = "INSERT INTO sla_file (filename, path,usp,sp_period) VALUES ($1, $2, $3, $4) returning id"
 	var sla int64
-	err := db.QueryRow(query, filename, path, id).Scan(&sla)
+	err := db.QueryRow(query, filename, path, id, spPeriodId).Scan(&sla)
 	if err != nil {
 		return err
 	}

@@ -60,7 +60,7 @@ func UploadBilling(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(date)
 	res, err := usecase.GetPeriodNow(ctx, date)
 
-	localPath, err := usecase.UploadFile(f, h, &file, id, st, res.Id)
+	localPath, err := usecase.UploadFile(f, h, &file, id, st, res.Id, 0)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
@@ -288,9 +288,17 @@ func UploadSLA(w http.ResponseWriter, r *http.Request) {
 	}
 	//fmt.Println("id: ", r.Form["id"]) // все получение данных из формы
 	strId := r.Form["id"]
-	var id int64
+	strSPId := r.Form["sp"]
+	var id, IdSp int64
 	if len(strId) != 0 {
 		id, err = strconv.ParseInt(strId[0], 10, 64)
+		if err != nil {
+			ErrorResponse(w, err)
+			return
+		}
+	}
+	if len(strSPId) != 0 {
+		IdSp, err = strconv.ParseInt(strSPId[0], 10, 64)
 		if err != nil {
 			ErrorResponse(w, err)
 			return
@@ -318,7 +326,7 @@ func UploadSLA(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(date)
 	res, err := usecase.GetPeriodNow(ctx, date)
 
-	localPath, err := usecase.UploadFile(f, h, &file, id, "", res.Id)
+	localPath, err := usecase.UploadFile(f, h, &file, id, "", res.Id, IdSp)
 	if err != nil {
 		ErrorResponse(w, err)
 		return
