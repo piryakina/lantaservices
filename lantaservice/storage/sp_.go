@@ -422,6 +422,7 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 				return nil, err
 			}
 			temp.SLA = *fromSLADB(t)
+			fmt.Println(temp.SLA.IsAgreed)
 		}
 		res = append(res, &temp)
 
@@ -429,8 +430,6 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 	defer rows3.Close()
 	defer rows2.Close()
 	defer rows.Close()
-	fmt.Println(res)
-	fmt.Println(err)
 	return res, nil
 }
 
