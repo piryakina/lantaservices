@@ -278,12 +278,12 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	}
 	var billings []entities.BillingFile
 	for rows.Next() {
-		var file entities.BillingFile
+		var file BillingFileDB
 		if err = rows.Scan(&file.ID, &file.Filename, &file.Path, &file.Date, &file.Status, &file.Comments); err != nil {
 			return nil, err
 		}
 		//fmt.Println(file.ID)
-		billings = append(billings, file)
+		billings = append(billings, *fromFileDB(file))
 	}
 	defer rows.Close()
 	query = "select v.filename, v.path, v.date from invoice_file as v where sp_period_id=$1"
