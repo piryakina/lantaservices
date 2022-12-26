@@ -51,6 +51,10 @@ func GetDataPeriod(ctx context.Context, idPeriod int64) ([]*entities.SpPeriod, e
 	}
 	return res, nil
 }
+func SetApproveSla(ctx context.Context, approve bool, id int64) error {
+	err := storage.SetApproveSLA(ctx, approve, id)
+	return err
+}
 
 //func GetSpNameById(ctx context.Context, id int64) (string, error) {
 //	name, err := storage.GetSpNameByID(ctx, id)

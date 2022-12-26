@@ -48,6 +48,7 @@ type SLAFileDB struct {
 	//Date     string         `db:"date"`
 	USP      sql.NullString `db:"usp"`
 	SpPeriod int64          `db:"sp_period"`
+	IsAgreed sql.NullBool   `db:"is_agreed"`
 }
 
 func FromSPDB(p *SPDB) *entities.SP {
@@ -165,12 +166,17 @@ func fromSLADB(p SLAFileDB) *entities.SLAFile {
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
+	var agree bool
+	if p.IsAgreed.Valid {
+		agree = p.IsAgreed.Bool
+	}
 	return &entities.SLAFile{
 		ID:       p.ID,
 		Filename: filename,
 		Path:     path,
 		USP:      usp,
 		SpPeriod: p.SpPeriod,
+		IsAgreed: agree,
 	}
 }
 
@@ -296,7 +302,7 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 		}
 		invoices = append(invoices, file)
 	}
-	query = "SELECT id, filename, path from sla_file where sp_period=$1"
+	query = "SELECT id, filename, path, is_agreed from sla_file where sp_period=$1"
 	var rows3 *sql.Rows
 	rows3, err = db.QueryContext(ctx, query, temp.ID)
 	if err != nil {
@@ -304,7 +310,7 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 	}
 	var t SLAFileDB
 	for rows3.Next() {
-		if err = rows3.Scan(&t.ID, &t.Filename, &t.Path); err != nil {
+		if err = rows3.Scan(&t.ID, &t.Filename, &t.Path, &t.IsAgreed); err != nil {
 			return nil, err
 		}
 		//temp.SLA = *fromSLADB(t)
@@ -405,14 +411,14 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 			}
 			temp.Billing = append(temp.Billing, *fromFileDB(t))
 		}
-		query = "SELECT id, filename, path from sla_file where sp_period=$1"
+		query = "SELECT id, filename, path, is_agree from sla_file where sp_period=$1"
 		rows3, err = db.QueryContext(ctx, query, temp.ID)
 		if err != nil {
 			return nil, err
 		}
 		for rows3.Next() {
 			var t SLAFileDB
-			if err = rows3.Scan(&t.ID, &t.Filename, &t.Path); err != nil {
+			if err = rows3.Scan(&t.ID, &t.Filename, &t.Path, &t.IsAgreed); err != nil {
 				return nil, err
 			}
 			temp.SLA = *fromSLADB(t)
@@ -425,4 +431,14 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 	defer rows.Close()
 
 	return res, nil
+}
+
+func SetApproveSLA(ctx context.Context, approve bool, id int64) error {
+	query := "Update sla_file set is_agreed=$1 where id=$2"
+	db := GetDB()
+	_, err := db.ExecContext(ctx, query, approve, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

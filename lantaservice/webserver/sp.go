@@ -5,6 +5,7 @@ import (
 	"lantaservice/entities"
 	"lantaservice/usecase"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -56,6 +57,29 @@ func GetDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 //	}
 //	JsonResponse(w, res, 200)
 //}
+
+func ApproveSla(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	query := r.URL.Query()
+	str := query.Get("approve")
+	str2 := query.Get("id")
+	approve, err := strconv.ParseBool(str)
+	if err != nil {
+		ErrorResponse(w, err)
+		return
+	}
+	id, err := strconv.ParseInt(str2, 10, 64)
+	if err != nil {
+		ErrorResponse(w, err)
+
+		return
+	}
+	err = usecase.SetApproveSla(ctx, approve, id)
+	if err != nil {
+		ErrorResponse(w, err)
+	}
+	JsonResponse(w, StatusResponse{Status: true}, 200)
+}
 
 func AddDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

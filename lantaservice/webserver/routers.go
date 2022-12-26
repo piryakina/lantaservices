@@ -71,7 +71,9 @@ func Routing() []Route {
 		{"download-file", "GET", "/invoice/download", DownloadInvoice},
 		//add response by analytic or usp
 		{"upload-file", "POST", "/attachment/upload", UploadAttachments},
-		//set comments
+		//set comments analytic
 		{"set-comment-file", "POST", "/set-comment", SetCommentFile},
+		//approve sla
+		{"set-comment-file", "POST", "/approve-sla", ApproveSla},
 	}
 }

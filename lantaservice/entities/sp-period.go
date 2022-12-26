@@ -26,6 +26,7 @@ type SLAFile struct {
 	Path     string `json:"path,omitempty"`
 	USP      string `json:"usp,omitempty"`
 	SpPeriod int64  `json:"sp_period,omitempty"`
+	IsAgreed bool   `json:"is_agreed,omitempty"`
 }
 
 type BillingFile struct {
