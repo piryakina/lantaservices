@@ -87,6 +87,8 @@ func SaveBilling(filename string, path string, id int64, status string, idPeriod
 		}
 	case err != nil:
 		log.Fatalf("query error: %v\n", err)
+
+	default:
 	}
 	//if err := row.Scan(&spPeriodId); err != nil {
 	//	return err
@@ -131,34 +133,62 @@ func SaveInvoice(filename string, path string, id int64, idPeriod int64) error {
 
 func SaveAttach(filename string, path string, id int64) error { //todo attach
 	db := GetDB()
-	//query := "select id from sp_period where sp=$1 and period=$2"
-	//row := db.QueryRow(query, id, idPeriod)
-	//var spPeriodId int64
-	//if err = row.Scan(&spPeriodId); err != nil {
-	//	return err
-	//}
-	query := "INSERT INTO attachment (filename, path,news_id) VALUES ($1, $2, $3) returning id"
-	var attach int64
-	err := db.QueryRow(query, filename, path, id).Scan(&attach)
-	if err != nil {
+	query := "select id from attachment where news_id=$1"
+	var attachId int64
+	err := db.QueryRow(query, id).Scan(&attachId)
+	switch {
+	case err == sql.ErrNoRows:
+		query = "INSERT INTO attachment (filename, path,news_id) VALUES ($1, $2, $3) returning id"
+		var attach int64
+		err = db.QueryRow(query, filename, path, id).Scan(&attach)
+		if err != nil {
+			return err
+		}
+	case err != nil:
 		return err
+	default:
+		query = "DELETE from attachment where id=$1"
+		_, err = db.Exec(query, attachId)
+		if err != nil {
+			return err
+		}
+		query = "INSERT INTO attachment (filename, path,news_id) VALUES ($1, $2, $3) returning id"
+		var attach int64
+		err = db.QueryRow(query, filename, path, id).Scan(&attach)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
 func SaveSLA(filename string, path string, id int64, idPeriod int64, idSpPeriod int64) error { //todo attach
 	db := GetDB()
-	//query := "select id from sp_period where sp=$1 and period=$2"
-	//row := db.QueryRow(query, idSp, idPeriod)
-	//var spPeriodId int64
-	//if err := row.Scan(&spPeriodId); err != nil {
-	//	return err
-	//}
-	query := "INSERT INTO sla_file (filename, path,usp,sp_period) VALUES ($1, $2, $3, $4) returning id"
-	var sla int64
-	err := db.QueryRow(query, filename, path, id, idSpPeriod).Scan(&sla)
-	if err != nil {
+	query := "select id from sla_file where sp_period=$1"
+	var slaId int64
+	err := db.QueryRow(query, idSpPeriod).Scan(&slaId)
+	switch {
+	case err == sql.ErrNoRows:
+		query = "INSERT INTO sla_file (filename, path,usp,sp_period) VALUES ($1, $2, $3, $4) returning id"
+		var sla int64
+		err = db.QueryRow(query, filename, path, id, idSpPeriod).Scan(&sla)
+		if err != nil {
+			return err
+		}
+	case err != nil:
 		return err
+	default:
+		query = "DELETE from sla_file where id=$1"
+		_, err = db.Exec(query, slaId)
+		if err != nil {
+			return err
+		}
+		query = "INSERT INTO sla_file (filename, path,usp,sp_period) VALUES ($1, $2, $3, $4) returning id"
+		var sla int64
+		err = db.QueryRow(query, filename, path, id, idSpPeriod).Scan(&sla)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
