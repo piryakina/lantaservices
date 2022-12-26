@@ -296,10 +296,24 @@ func GetDataSpPeriodStorage(ctx context.Context, login string, date time.Time) (
 		}
 		invoices = append(invoices, file)
 	}
+	query = "SELECT id, filename, path from sla_file where sp_period=$1"
+	var rows3 *sql.Rows
+	rows3, err = db.QueryContext(ctx, query, temp.ID)
+	if err != nil {
+		return nil, err
+	}
+	var t SLAFileDB
+	for rows3.Next() {
+		if err = rows3.Scan(&t.ID, &t.Filename, &t.Path); err != nil {
+			return nil, err
+		}
+		//temp.SLA = *fromSLADB(t)
+	}
 	defer rows2.Close()
 	res = FromSPPeriodDB(&temp)
 	res.Billing = billings
 	res.Invoice = invoices
+	res.SLA = *fromSLADB(t)
 	return res, nil
 }
 
