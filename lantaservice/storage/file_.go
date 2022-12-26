@@ -146,17 +146,17 @@ func SaveAttach(filename string, path string, id int64) error { //todo attach
 	return nil
 }
 
-func SaveSLA(filename string, path string, id int64, idPeriod int64, idSp int64) error { //todo attach
+func SaveSLA(filename string, path string, id int64, idPeriod int64, idSpPeriod int64) error { //todo attach
 	db := GetDB()
-	query := "select id from sp_period where sp=$1 and period=$2"
-	row := db.QueryRow(query, idSp, idPeriod)
-	var spPeriodId int64
-	if err := row.Scan(&spPeriodId); err != nil {
-		return err
-	}
-	query = "INSERT INTO sla_file (filename, path,usp,sp_period) VALUES ($1, $2, $3, $4) returning id"
+	//query := "select id from sp_period where sp=$1 and period=$2"
+	//row := db.QueryRow(query, idSp, idPeriod)
+	//var spPeriodId int64
+	//if err := row.Scan(&spPeriodId); err != nil {
+	//	return err
+	//}
+	query := "INSERT INTO sla_file (filename, path,usp,sp_period) VALUES ($1, $2, $3, $4) returning id"
 	var sla int64
-	err := db.QueryRow(query, filename, path, id, spPeriodId).Scan(&sla)
+	err := db.QueryRow(query, filename, path, id, idSpPeriod).Scan(&sla)
 	if err != nil {
 		return err
 	}
