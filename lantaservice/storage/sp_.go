@@ -176,7 +176,7 @@ func fromSLADB(p SLAFileDB) *entities.SLAFile {
 		Path:     path,
 		USP:      usp,
 		SpPeriod: p.SpPeriod,
-		IsAgreed: agree,
+		IsAgreed: &agree,
 	}
 }
 
