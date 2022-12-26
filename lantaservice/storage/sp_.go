@@ -411,7 +411,7 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 			}
 			temp.Billing = append(temp.Billing, *fromFileDB(t))
 		}
-		query = "SELECT id, filename, path, is_agree from sla_file where sp_period=$1"
+		query = "SELECT id, filename, path, is_agreed from sla_file where sp_period=$1"
 		rows3, err = db.QueryContext(ctx, query, temp.ID)
 		if err != nil {
 			return nil, err
