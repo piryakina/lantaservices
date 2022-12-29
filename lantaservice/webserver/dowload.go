@@ -42,6 +42,7 @@ func DownloadInvoice(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, err)
 		return
 	}
+	w.Header().Set("Cache-Control", "no-store")
 	//fmt.Println(filePath)
 	// JsonResponse(w, StatusResponse{
 	// 	Status: true,

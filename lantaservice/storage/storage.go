@@ -15,9 +15,9 @@ const (
 	port = 5432
 	//port = 5432
 	user = "postgres"
-	//password = "12345678"
+	password = "12345678"
 	//password = "Wt2H1aqF"
-	password = "winx2011"
+	//password = "winx2011"
 	dbname   = "lanta_1"
 )
 
