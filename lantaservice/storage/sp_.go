@@ -411,6 +411,18 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 			}
 			temp.Billing = append(temp.Billing, *fromFileDB(t))
 		}
+		query = "SELECT id,filename, path,date from invoice_file where sp_period_id=$1"
+		rows2, err = db.QueryContext(ctx, query, temp.ID)
+		if err != nil {
+			return nil, err
+		}
+		for rows2.Next() {
+			var t InvoiceFileDB
+			if err = rows2.Scan(&t.ID, &t.Filename, &t.Path, &t.Date); err != nil {
+				return nil, err
+			}
+			temp.Invoice = append(temp.Invoice, *fromInvoiceDB(t))
+		}
 		query = "SELECT id, filename, path, is_agreed from sla_file where sp_period=$1"
 		rows3, err = db.QueryContext(ctx, query, temp.ID)
 		if err != nil {
@@ -422,7 +434,7 @@ func GetDataPeriodStorage(ctx context.Context, idPeriod int64) ([]*entities.SpPe
 				return nil, err
 			}
 			temp.SLA = *fromSLADB(t)
-			fmt.Println(temp.SLA.IsAgreed)
+			//fmt.Println(temp.SLA.IsAgreed)
 		}
 		res = append(res, &temp)
 
