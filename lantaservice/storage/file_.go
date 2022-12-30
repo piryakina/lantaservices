@@ -277,11 +277,10 @@ func GetInvoiceInfoById(ctx context.Context, id int64) (*entities.InvoiceFile, e
 	query := "select filename, path,date from invoice_file where id = $1"
 	row := db.QueryRowContext(ctx, query, id)
 	var doc InvoiceFileDB
-	dic.ID=id
+	doc.ID=id
 	if err := row.Scan(&doc.Filename, &doc.Path, &doc.Date); err != nil {
 		return nil, err
 	}
-	//fmt.Println(doc.ID)
 	file := fromInvoiceDB(doc)
 	return file, nil
 }
