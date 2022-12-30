@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+//AddUser - добавление пользователя
 func AddUser(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 	ctx := r.Context()
 	c := &entities.User{}
@@ -26,6 +27,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 		Detail: strconv.FormatInt(id, 10)}, 200)
 	//JsonResponse(w, StatusResponse{Status: true}, 200)
 }
+//GetUserRoleById - получение записи из бд о пользователе по его id
 func GetUserRoleById(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 	ctx := r.Context()
 	userSession, err := GetSession(r)
@@ -39,6 +41,7 @@ func GetUserRoleById(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 		Role: role, Name: name}, 200)
 	//JsonResponse(w, StatusResponse{Status: true}, 200)
 }
+//GetRoles - получение списка ролей
 func GetRoles(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 	ctx := r.Context()
 	roles, err := usecase.GetUserRoles(ctx)
@@ -49,7 +52,7 @@ func GetRoles(w http.ResponseWriter, r *http.Request) { //(s *HttpServer)
 	JsonResponse(w, roles, 200)
 	//JsonResponse(w, StatusResponse{Status: true}, 200)
 }
-
+//CheckLogin - проверка на вход
 func CheckLogin(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var login string

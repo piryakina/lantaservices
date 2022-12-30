@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 )
-
+//DownloadBilling - скачивание биллинга
 func DownloadBilling(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	//fmt.Println("id: ", r.Form["id"]) // все получение данных из формы
@@ -29,6 +29,7 @@ func DownloadBilling(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filePath)
 	}
 }
+//DownloadInvoice - скачивание счетов
 func DownloadInvoice(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	//fmt.Println("id: ", r.Form["id"]) // все получение данных из формы
@@ -52,7 +53,7 @@ func DownloadInvoice(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filePath)
 	}
 }
-
+//DownloadSLA - скачивание СЛА
 func DownloadSLA(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	//fmt.Println("id: ", r.Form["id"]) // все получение данных из формы
@@ -75,7 +76,7 @@ func DownloadSLA(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filePath)
 	}
 }
-
+//GetImg - получение картинки новости
 func GetImg(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	fileId, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)

@@ -26,6 +26,7 @@ import (
 //		Detail: strconv.FormatInt(id, 10)}, 200)
 //}
 
+// GetDataSpPeriodNow - получение записи периода у пользователя 
 func GetDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	query := r.URL.Query()
@@ -58,6 +59,7 @@ func GetDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 //	JsonResponse(w, res, 200)
 //}
 
+// ApproveSla - изменение статуса принятия файла  sla
 func ApproveSla(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	query := r.URL.Query()
@@ -81,6 +83,7 @@ func ApproveSla(w http.ResponseWriter, r *http.Request) {
 	JsonResponse(w, StatusResponse{Status: true}, 200)
 }
 
+// AddDataSpPeriodNow - добавление записи связи сп и периода
 func AddDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c := &entities.SpPeriod{}
@@ -114,6 +117,8 @@ func AddDataSpPeriodNow(w http.ResponseWriter, r *http.Request) {
 //			Detail: name,
 //		}, 200)
 //	}
+
+// GetDataPeriod - получение записи связи сп и периода
 func GetDataPeriod(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	date := time.Now()
@@ -130,6 +135,7 @@ func GetDataPeriod(w http.ResponseWriter, r *http.Request) {
 	}
 	JsonResponse(w, rows, 200)
 }
+//SetCommentFile - установление комментария к биллингу
 func SetCommentFile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c := &entities.CommentFile{}

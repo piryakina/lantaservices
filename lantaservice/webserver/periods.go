@@ -13,7 +13,7 @@ type EnterPeriod struct {
 	DateTo   string `json:"date_to"`
 	Title    string `json:"title"`
 }
-
+//AddNewPeriod - добавление нового периода
 func AddNewPeriod(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c := &entities.Period{}
@@ -46,7 +46,7 @@ func AddNewPeriod(w http.ResponseWriter, r *http.Request) {
 		Detail: "success",
 	}, 200)
 }
-
+//GetPeriodNow - получение текущего периода
 func GetPeriodNow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	date := time.Now()
@@ -58,6 +58,7 @@ func GetPeriodNow(w http.ResponseWriter, r *http.Request) {
 	}
 	JsonResponse(w, res, 200)
 }
+//GetAllPeriods - получение всех периодов
 func GetAllPeriods(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res, err := usecase.GetAllPeriods(ctx)

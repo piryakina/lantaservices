@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 )
-
+//AddNews - добавление новости
 func AddNews(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c := &entities.News{}
@@ -28,7 +28,7 @@ func AddNews(w http.ResponseWriter, r *http.Request) {
 	}
 	JsonResponse(w, StatusId{Id: id}, 200)
 }
-
+//GetNews - получение всех новостей
 func GetNews(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var news []*entities.News

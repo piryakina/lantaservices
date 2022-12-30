@@ -7,14 +7,7 @@ import (
 	"lantaservice/storage"
 )
 
-//type UserServer interface {
-//	SignUpUser(usr *entities.User) (int64, error)
-//	SignUpSP(ctx context.Context, usr *entities.SP) (int64, error)
-//}
-//type ServiceUser struct {
-//	UserRepository entities.UserRepository
-//}
-
+//SignUpUser - регистриация пользователя
 func SignUpUser(ctx context.Context, usr *entities.User) (int64, error) { //registration  (s *ServiceUser)
 	hash, err := bcrypt.GenerateFromPassword([]byte(usr.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -28,6 +21,7 @@ func SignUpUser(ctx context.Context, usr *entities.User) (int64, error) { //regi
 	}
 	return id, nil
 }
+//GetRoleUserById - получени роли пользователя
 func GetRoleUserById(ctx context.Context, id int64) (string, string, error) {
 	role, name, err := storage.GetUserRoleById(ctx, id)
 	if err != nil {
@@ -35,6 +29,7 @@ func GetRoleUserById(ctx context.Context, id int64) (string, string, error) {
 	}
 	return role, name, nil
 }
+//GetUserRoles - получение списка ролей
 func GetUserRoles(ctx context.Context) ([]string, error) {
 	role, err := storage.GetRoles(ctx)
 	if err != nil {

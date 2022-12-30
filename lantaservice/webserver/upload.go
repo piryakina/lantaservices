@@ -15,7 +15,7 @@ import (
 //	status string `json:"status,omitempty"`
 //}
 
-// UploadFile upload file
+// UploadFile - загрузка биллинга на серв
 func UploadBilling(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	r.Body = http.MaxBytesReader(w, r.Body, 150<<20)
@@ -151,6 +151,7 @@ func UploadInvoice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+// SetStatusFile - установка статуса файла
 func SetStatusFile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	query := r.URL.Query()
@@ -176,6 +177,7 @@ func SetStatusFile(w http.ResponseWriter, r *http.Request) {
 		Detail: "status is set",
 	}, 200)
 }
+// GetStatuses - все статусы файлов
 func GetStatuses(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res, err := usecase.GetStatus(ctx)
@@ -208,7 +210,7 @@ func GetStatuses(w http.ResponseWriter, r *http.Request) {
 //	}, 200)
 //}
 
-// UploadInvoice UploadFile upload file
+// UploadAttachments - загрузка вложений в новостям
 func UploadAttachments(w http.ResponseWriter, r *http.Request) {
 	//ctx := r.Context()
 	r.Body = http.MaxBytesReader(w, r.Body, 150<<20)
