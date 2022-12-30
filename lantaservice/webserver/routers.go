@@ -35,9 +35,9 @@ func Routing() []Route {
 		{"check-user-unique-login", "POST", "/admin/checklogin", CheckLogin},
 		{"add-user", "GET", "/role", GetUserRoleById},
 		{"add-user", "GET", "/roles", GetRoles},
-		{"add-user", "GET", "/sp", GetSPNameById},
+		// {"add-user", "GET", "/sp", GetSPNameById},
 		//{"edit-user", "POST", "/admin/edit-user", nil},
-		{"add-sp", "POST", "/admin/add-sp", AddSp},
+		// {"add-sp", "POST", "/admin/add-sp", AddSp},
 		//{"edit-sp", "POST", "/admin/edit-sp", nil},
 
 		//usp
