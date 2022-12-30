@@ -12,7 +12,7 @@ var DBRU *sqlx.DB
 
 const (
 	host = "localhost"
-	port = 6543
+	port = 5432
 	//port = 5432
 	user = "postgres"
 	// password = "12345678"
