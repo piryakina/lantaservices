@@ -288,10 +288,11 @@ func GetInvoiceInfoById(ctx context.Context, id int64) (*entities.InvoiceFile, e
 func GetSLAInfoById(ctx context.Context, id int64) (*entities.SLAFile, error) {
 	db := GetDB()
 	fmt.Println(id)
-	query := "select id, filename, path, usp from sla_file where id = $1"
+	query := "select filename, path, usp from sla_file where id = $1"
 	row := db.QueryRowContext(ctx, query, id)
 	var doc SLAFileDB
-	if err := row.Scan(&doc.ID, &doc.Filename, &doc.Path, &doc.USP); err != nil {
+	doc.ID=id
+	if err := row.Scan(&doc.Filename, &doc.Path, &doc.USP); err != nil {
 		return nil, err
 	}
 	//fmt.Println(doc.ID)
